@@ -322,6 +322,12 @@ function ggs_page_defs() {
 			. $p( 'To the extent permitted by law, the group is not liable for any loss arising from the use of this website or reliance on its content.' )
 			. $h( 'Governing law' )
 			. $p( 'These terms are governed by the laws of India, and the courts at Kurukshetra, Haryana have jurisdiction.' ), '' ),
+		'business-structures' => array( 'Business Structures', ggs_block_sc( '[gg_structures]' ), '' ),
+		'business-structures/company' => array( 'Private Limited Company', ggs_block_sc( '[gg_structure slug="company"]' ), '' ),
+		'business-structures/llp' => array( 'Limited Liability Partnership (LLP)', ggs_block_sc( '[gg_structure slug="llp"]' ), '' ),
+		'business-structures/partnership-firm' => array( 'Partnership Firm', ggs_block_sc( '[gg_structure slug="partnership-firm"]' ), '' ),
+		'business-structures/proprietorship' => array( 'Sole Proprietorship', ggs_block_sc( '[gg_structure slug="proprietorship"]' ), '' ),
+		'business-structures/trust-society' => array( 'Trust / Society', ggs_block_sc( '[gg_structure slug="trust-society"]' ), '' ),
 		'gst-registration-drafter' => array( 'GST Registration Drafter', ggs_block_sc( '[gg_tool name="gst-registration-drafter"]' ), '' ),
 		'professional-resources' => array( 'Professional Resources', $p( 'Government portals and professional bodies we use every day.' ) . ggs_block_sc( '[gg_portal_links]' ), '' ),
 	);
@@ -423,11 +429,13 @@ function ggs_run_setup( $replace ) {
 			}
 			$ids[ $slug ] = $page->ID;
 		} else {
+			$parent_slug  = false !== strpos( $slug, '/' ) ? substr( $slug, 0, strrpos( $slug, '/' ) ) : '';
 			$ids[ $slug ] = wp_insert_post( array(
 				'post_type'    => 'page',
 				'post_status'  => 'publish',
 				'post_title'   => $title,
-				'post_name'    => $slug,
+				'post_name'    => basename( $slug ),
+				'post_parent'  => ( $parent_slug && ! empty( $ids[ $parent_slug ] ) ) ? $ids[ $parent_slug ] : 0,
 				'post_content' => $content,
 			) );
 			if ( $template ) {
@@ -519,6 +527,9 @@ function ggs_build_menus( $ids ) {
 	ggs_menu_page( $main, $ids['our-group'], 'Our Group', $about );
 	ggs_menu_page( $main, $ids['careers'], 'Careers & Articleship', $about );
 	$svc = ggs_menu_add( $main, array( 'menu-item-title' => 'Services', 'menu-item-object' => 'page', 'menu-item-object-id' => $ids['services'], 'menu-item-type' => 'post_type', 'menu-item-description' => 'What we do' ) );
+	if ( ! empty( $ids['business-structures'] ) ) {
+		ggs_menu_add( $main, array( 'menu-item-title' => 'Starting a Business', 'menu-item-object' => 'page', 'menu-item-object-id' => $ids['business-structures'], 'menu-item-type' => 'post_type' ), $svc );
+	}
 	foreach ( ggs_services() as $s ) {
 		ggs_menu_add( $main, array(
 			'menu-item-title'     => get_the_title( $s ),

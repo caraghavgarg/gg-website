@@ -59,6 +59,12 @@ $pics       = array( 'about', 'services', 'team', 'resources', 'calculators', 'c
 		<?php endif; ?>
 	</section>
 
+	<?php
+	if ( function_exists( 'ggs_structures_strip' ) ) {
+		echo ggs_structures_strip(); // phpcs:ignore
+	}
+	?>
+
 	<?php if ( $has_plugin ) : ?>
 	<section class="sec">
 		<h2 class="sec-title">Our Services</h2>

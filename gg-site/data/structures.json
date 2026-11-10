@@ -1,0 +1,173 @@
+{
+ "order": ["company", "llp", "partnership-firm", "proprietorship", "trust-society"],
+ "items": {
+  "company": {
+   "title": "Company",
+   "full": "Private Limited Company / One Person Company",
+   "tag": "Limited liability, separate legal entity, built to raise capital",
+   "img": "company",
+   "facts": [
+    ["Law", "Companies Act, 2013"],
+    ["Registered with", "Registrar of Companies (Ministry of Corporate Affairs)"],
+    ["Members", "Private company: 2 to 200 members and at least 2 directors. One Person Company: 1 member and 1 director"],
+    ["Liability", "Limited to the unpaid amount on the shares held"],
+    ["Income tax", "22% under the concessional regime (otherwise 25% or 30%), plus surcharge and cess. Dividends are taxed again in the shareholders' hands"]
+   ],
+   "about": [
+    "A company is a separate legal person, distinct from the people who own and run it. It can own property, borrow, enter into contracts and sue in its own name, and it continues even when shareholders or directors change.",
+    "Most growing businesses choose a private limited company. A One Person Company (OPC) gives a single founder the same limited liability with one shareholder and one director."
+   ],
+   "benefits": [
+    "Shareholders' personal assets are protected: liability is limited to the unpaid share capital.",
+    "Perpetual succession: the company is not affected by the death, exit or change of shareholders.",
+    "Easiest structure for raising money: equity investors, venture funds and most lenders prefer companies, and shares can be issued to new investors.",
+    "Credibility with banks, large customers, government tenders and foreign partners.",
+    "Employee stock options (ESOPs) can be offered to retain key people.",
+    "Concessional corporate tax rate of 22% (plus surcharge and cess) for companies that opt for it."
+   ],
+   "cons": [
+    "Highest compliance of all structures: a statutory audit every year whatever the turnover, annual returns (AOC-4 and MGT-7/7A), board meetings, statutory registers and yearly KYC of every director.",
+    "Late filing attracts additional fees of ₹100 per day per form, and repeated defaults can disqualify directors.",
+    "Profits reach owners as salary or dividend; dividends are taxed again in the shareholders' hands.",
+    "Money cannot be drawn freely from the company: loans to directors and related-party transactions are restricted.",
+    "Transfer of shares in a private company is restricted by its articles.",
+    "Closing a company (strike-off or winding up) takes time and needs all filings to be up to date.",
+    "Ongoing professional costs for accounts, audit and secretarial compliance."
+   ],
+   "needs": "Digital signatures and DIN for directors, name approval, registered office proof, and the Memorandum and Articles of Association."
+  },
+  "llp": {
+   "title": "LLP",
+   "full": "Limited Liability Partnership",
+   "tag": "Partnership flexibility with limited liability",
+   "img": "llp",
+   "facts": [
+    ["Law", "Limited Liability Partnership Act, 2008"],
+    ["Registered with", "Registrar of Companies (Ministry of Corporate Affairs)"],
+    ["Members", "At least 2 partners, including 2 designated partners (one resident in India); no upper limit"],
+    ["Liability", "Limited to each partner's agreed contribution"],
+    ["Income tax", "30% plus surcharge and cess; the partners' share of profit is not taxed again"]
+   ],
+   "about": [
+    "An LLP is a separate legal entity, like a company, but is run like a partnership under an LLP agreement between the partners.",
+    "It suits professional practices, family businesses and small and medium enterprises that want limited liability without the full compliance of a company."
+   ],
+   "benefits": [
+    "Partners are not personally liable for the LLP's debts beyond their contribution, or for another partner's misconduct.",
+    "Separate legal entity with perpetual succession; partners can join or retire without dissolving the LLP.",
+    "Lighter compliance than a company: no board meetings, and audit is required only if turnover exceeds ₹40 lakh or contribution exceeds ₹25 lakh.",
+    "No minimum capital requirement.",
+    "Profit share received by partners is exempt in their hands, so there is no second layer of tax like dividends.",
+    "An existing partnership firm or private company can be converted into an LLP."
+   ],
+   "cons": [
+    "Flat 30% tax (plus surcharge and cess): there is no concessional rate like the 22% available to companies, so it can cost more at higher profits.",
+    "Harder to raise equity: investors and venture funds generally prefer companies, and an LLP cannot issue shares or ESOPs.",
+    "Two annual MCA filings are compulsory even if there is no business: Form 11 (annual return) and Form 8 (accounts and solvency). Late fee is ₹100 per day for each form.",
+    "The LLP agreement must be filed with the Registrar within 30 days of incorporation, and every change of partners must be reported.",
+    "Designated partners need DIN and digital signatures and must keep their KYC current.",
+    "Foreign investment is allowed only in sectors open to 100% foreign investment under the automatic route without conditions."
+   ],
+   "needs": "Digital signatures and DIN for designated partners, name approval, registered office proof, and an LLP agreement."
+  },
+  "partnership-firm": {
+   "title": "Partnership Firm",
+   "full": "Partnership Firm",
+   "tag": "Quick to start, run on a deed between partners",
+   "img": "partnership",
+   "facts": [
+    ["Law", "Indian Partnership Act, 1932"],
+    ["Registered with", "Registrar of Firms of the State (registration is optional but strongly advised)"],
+    ["Members", "2 to 50 partners"],
+    ["Liability", "Unlimited, joint and several: each partner can be held liable for all the firm's debts"],
+    ["Income tax", "30% plus surcharge and cess; interest and remuneration to partners are deductible within limits; partners' profit share is exempt"]
+   ],
+   "about": [
+    "A partnership firm is two or more persons carrying on business together under a partnership deed that sets out capital, profit sharing, duties and what happens when a partner leaves.",
+    "It is common for traders, family businesses and small manufacturers because it can be set up within days."
+   ],
+   "benefits": [
+    "Quick and inexpensive to form: a partnership deed on stamp paper, PAN for the firm and a bank account.",
+    "No annual filings with the Ministry of Corporate Affairs and no compulsory audit unless the tax-audit limits apply.",
+    "Flexible: partners decide capital, profit sharing and management in the deed.",
+    "Interest on capital and remuneration to working partners can be paid and claimed as expenses within the limits of the Income-tax Act.",
+    "Simple to change or dissolve by agreement."
+   ],
+   "cons": [
+    "Unlimited, joint and several liability: partners' personal assets can be used to pay the firm's debts, including debts caused by another partner.",
+    "Not a separate legal entity: the firm and its partners are treated as one, and the firm may dissolve on the death or exit of a partner unless the deed provides otherwise.",
+    "An unregistered firm cannot file a suit against third parties to enforce its contracts, and partners cannot sue the firm or each other on the deed.",
+    "Banks and investors are more cautious; raising large finance is harder.",
+    "Every change of partners or terms needs a revised deed and updates to registration, PAN, GST and bank records.",
+    "Without a carefully drafted deed, disputes between partners are common and hard to resolve."
+   ],
+   "needs": "A partnership deed, PAN of the firm, identity and address proofs of partners, and address proof of the business place."
+  },
+  "proprietorship": {
+   "title": "Proprietorship",
+   "full": "Sole Proprietorship",
+   "tag": "One owner, simplest to start and run",
+   "img": "proprietor",
+   "facts": [
+    ["Law", "No separate law; the business is the owner's own activity"],
+    ["Registered with", "No incorporation; identified through registrations such as GST, Udyam and shop and establishment licence"],
+    ["Members", "1 (the proprietor)"],
+    ["Liability", "Unlimited: the owner is personally liable for all business debts"],
+    ["Income tax", "Taxed with the owner's other income at individual slab rates; presumptive schemes are available to small businesses within limits"]
+   ],
+   "about": [
+    "A sole proprietorship is a business owned and run by one individual. The business and the owner are the same person in law and for tax.",
+    "It is the usual starting point for shops, traders, freelancers and small service businesses."
+   ],
+   "benefits": [
+    "Simplest and cheapest to start: no incorporation, just the registrations the business needs (GST, Udyam, local licences) and a current account.",
+    "The owner takes every decision and keeps all profits.",
+    "Minimal compliance: business income is shown in the owner's own income-tax return.",
+    "Individual slab rates can mean lower tax at modest income levels, and small businesses can use presumptive taxation within limits.",
+    "Easy to close: the owner simply stops the business and cancels registrations."
+   ],
+   "cons": [
+    "Unlimited liability: the owner's personal property is exposed to business debts and claims.",
+    "No separate identity or continuity: the business effectively ends with the owner and cannot be handed over as a running entity easily.",
+    "Partners or investors cannot be brought in without changing to another structure.",
+    "Bank finance depends on the owner's personal credit and security.",
+    "At higher incomes, slab rates of up to 30% plus surcharge can exceed what a company or LLP would pay.",
+    "Banks ask for two documents in the business name to open a current account, so registrations should be in place first."
+   ],
+   "needs": "PAN and Aadhaar of the owner, address proof of the business place, and the registrations the business needs (for example GST or Udyam)."
+  },
+  "trust-society": {
+   "title": "Trust / Society",
+   "full": "Charitable Trust / Society",
+   "tag": "For charitable, educational, religious and social work",
+   "img": "trust",
+   "facts": [
+    ["Law", "Trust: Indian Trusts Act, 1882 and the State's public trust law. Society: Societies Registration Act, 1860 or the State Act (in Haryana, the Haryana Registration and Regulation of Societies Act, 2012)"],
+    ["Registered with", "Trust deed with the Sub-Registrar; society with the State Registrar of Societies"],
+    ["Members", "Trust: at least 2 trustees. Society: at least 7 members"],
+    ["Liability", "Trustees and governing members act for the institution; they are personally answerable for breach of trust"],
+    ["Income tax", "Income can be exempt once the institution is registered with the Income Tax Department and applies its income to its objects"]
+   ],
+   "about": [
+    "Trusts and societies are the usual forms for non-profit work: schools, hospitals, gaushalas, religious places, welfare and community organisations.",
+    "A trust is created by a trust deed and run by trustees. A society is an association of members registered under the societies law and run by an elected governing body. A Section 8 company is a third option for larger non-profits."
+   ],
+   "benefits": [
+    "Suited to charitable, educational, religious and social objects, and recognised by government departments and donors.",
+    "Income can be exempt from tax after registration with the Income Tax Department, provided it is applied to the institution's objects.",
+    "With approval, donors can claim a deduction for their donations, which helps fund-raising.",
+    "Can receive grants and, once eligible, CSR funds from companies.",
+    "Continues beyond the founders; property is held for the institution's purposes."
+   ],
+   "cons": [
+    "Income and property cannot be used for the personal benefit of founders, trustees or their relatives.",
+    "Tax exemption depends on registration and its renewal (generally every five years), on applying most of the income each year (currently 85%) to the objects, and on audited accounts and timely returns.",
+    "Foreign contributions need separate registration under the FCRA.",
+    "Strict rules on cash and anonymous donations, accumulation of income and investments.",
+    "Hard to wind up: remaining assets must go to another similar institution, not back to the founders.",
+    "A society depends on members and elections; internal disputes can stall its working."
+   ],
+   "needs": "Trust deed or memorandum and rules/bye-laws, identity and address proofs of trustees or members, and proof of the registered office."
+  }
+ }
+}

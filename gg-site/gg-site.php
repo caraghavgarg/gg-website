@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       GG Site
  * Description:       Content types, calculators, due-date calendar, Acts & Rules hub, enquiry form and one-click setup for the GG Associates website. Use with the GG Theme.
- * Version:           2.3.0
+ * Version:           2.4.0
  * Author:            Garg Garg & Associates
  * Requires at least: 6.4
  * Requires PHP:      7.4
@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'GGS_VER', '2.3.0' );
+define( 'GGS_VER', '2.4.0' );
 define( 'GGS_DIR', plugin_dir_path( __FILE__ ) );
 define( 'GGS_URL', plugin_dir_url( __FILE__ ) );
 
@@ -25,6 +25,7 @@ require_once GGS_DIR . 'includes/settings.php';
 require_once GGS_DIR . 'includes/setup.php';
 require_once GGS_DIR . 'includes/hardening.php';
 require_once GGS_DIR . 'includes/updater.php';
+require_once GGS_DIR . 'includes/structures.php';
 
 register_activation_hook( __FILE__, function () {
 	ggs_register_content_types();

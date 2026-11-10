@@ -23,7 +23,8 @@ function ggs_position_choices() {
 }
 
 add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
-	$careers = is_array( $atts ) && isset( $atts['type'] ) && 'careers' === $atts['type'];
+	$careers   = is_array( $atts ) && isset( $atts['type'] ) && 'careers' === $atts['type'];
+	$structure = ( is_array( $atts ) && isset( $atts['type'] ) && 'structure' === $atts['type'] ) ? sanitize_key( $atts['structure'] ?? '' ) : '';
 	$status = isset( $_GET['enquiry'] ) ? sanitize_key( wp_unslash( $_GET['enquiry'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
 	$msg    = '';
 	if ( 'sent' === $status ) {
@@ -31,7 +32,7 @@ add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
 			? '<div class="gg-alert gg-alert--ok" role="status">Thank you. Your application has reached our office. Please also email your CV to ' . esc_html( ggs_setting( 'email' ) ) . ' if you have not already.</div>'
 			: '<div class="gg-alert gg-alert--ok" role="status">Thank you. Your request has reached our office; we usually reply within one working day.</div>';
 	} elseif ( 'error' === $status ) {
-		$msg = '<div class="gg-alert gg-alert--err" role="alert">Please fill in your name, a valid email or phone number, a message, and tick the consent box.</div>';
+		$msg = '<div class="gg-alert gg-alert--err" role="alert">Please fill in your name, a valid email or phone number, ' . ( $structure ? 'your address, your requirement' : 'a message' ) . ', and tick the consent box.</div>';
 	} elseif ( 'limit' === $status ) {
 		$msg = '<div class="gg-alert gg-alert--err" role="alert">Too many requests from this connection. Please call or email us instead.</div>';
 	}
@@ -48,7 +49,8 @@ add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
 		<?php echo $msg; // phpcs:ignore ?>
 		<input type="hidden" name="action" value="ggs_enquiry">
 		<input type="hidden" name="_ggs_nonce" value="<?php echo esc_attr( $token ); ?>">
-		<input type="hidden" name="form_type" value="<?php echo $careers ? 'careers' : 'enquiry'; ?>">
+		<input type="hidden" name="form_type" value="<?php echo $careers ? 'careers' : ( $structure ? 'structure' : 'enquiry' ); ?>">
+		<?php if ( $structure ) : ?><input type="hidden" name="structure" value="<?php echo esc_attr( $structure ); ?>"><?php endif; ?>
 		<input type="hidden" name="ts" value="<?php echo esc_attr( $ts ); ?>">
 		<input type="hidden" name="back" value="<?php echo esc_url( get_permalink() ); ?>">
 		<div class="gg-hp" aria-hidden="true"><label>Website <input type="text" name="website" tabindex="-1" autocomplete="off"></label></div>
@@ -56,7 +58,10 @@ add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
 			<label><span class="lbl">Name <span aria-hidden="true">*</span></span><input type="text" name="name" required maxlength="120" autocomplete="name"></label>
 			<label><span class="lbl">Phone / WhatsApp</span><input type="tel" name="phone" maxlength="20" autocomplete="tel" inputmode="tel"></label>
 			<label><span class="lbl">Email</span><input type="email" name="email" maxlength="160" autocomplete="email"></label>
-			<?php if ( $careers ) : ?>
+			<?php if ( $structure ) : ?>
+				<label class="gg-form-wide"><span class="lbl">Address <span aria-hidden="true">*</span></span><textarea name="address" rows="2" required maxlength="500" autocomplete="street-address"></textarea></label>
+				<label class="gg-form-wide"><span class="lbl">Your requirement <span aria-hidden="true">*</span> <small>(nature of business, number of partners or directors, city)</small></span><textarea name="message" rows="5" required maxlength="3000"></textarea></label>
+			<?php elseif ( $careers ) : ?>
 				<label><span class="lbl">Position</span><select name="service"><option value="">Select a position</option><?php echo $opts; // phpcs:ignore ?></select></label>
 				<label><span class="lbl">Available from <small>(optional)</small></span><input type="date" name="pref_date"></label>
 				<label class="gg-form-wide"><span class="lbl">About you <span aria-hidden="true">*</span> <small>(qualification, CA registration stage, experience, city)</small></span><textarea name="message" rows="5" required maxlength="3000"></textarea></label>
@@ -107,6 +112,7 @@ function ggs_handle_enquiry() {
 		'service'   => sanitize_text_field( wp_unslash( $_POST['service'] ?? '' ) ),
 		'pref_date' => sanitize_text_field( wp_unslash( $_POST['pref_date'] ?? '' ) ),
 		'message'   => sanitize_textarea_field( wp_unslash( $_POST['message'] ?? '' ) ),
+		'address'   => sanitize_textarea_field( wp_unslash( $_POST['address'] ?? '' ) ),
 		'consent'   => empty( $_POST['consent'] ) ? '' : 'Yes, ' . wp_date( 'j M Y H:i' ),
 	);
 	if ( '' === $f['name'] || '' === $f['message'] || ( ! is_email( $f['email'] ) && strlen( preg_replace( '/\D/', '', $f['phone'] ) ) < 10 ) || '' === $f['consent'] ) {
@@ -115,8 +121,20 @@ function ggs_handle_enquiry() {
 	if ( $f['pref_date'] && ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $f['pref_date'] ) ) {
 		$f['pref_date'] = '';
 	}
-	$is_job = isset( $_POST['form_type'] ) && 'careers' === $_POST['form_type'];
-	if ( $f['service'] && ! in_array( $f['service'], $is_job ? ggs_position_choices() : ggs_service_choices(), true ) ) {
+	$is_job    = isset( $_POST['form_type'] ) && 'careers' === $_POST['form_type'];
+	$is_struct = isset( $_POST['form_type'] ) && 'structure' === $_POST['form_type'];
+	$st_title  = '';
+	if ( $is_struct ) {
+		$sd  = function_exists( 'ggs_structures' ) ? ggs_structures() : array( 'items' => array() );
+		$key = sanitize_key( wp_unslash( $_POST['structure'] ?? '' ) );
+		$key = isset( $sd['items'][ $key ] ) ? $key : str_replace( '_', '-', $key );
+		$st_title = isset( $sd['items'][ $key ] ) ? $sd['items'][ $key ]['title'] : 'Not stated';
+		if ( '' === $f['address'] ) {
+			$go( 'error' );
+		}
+		$f['service'] = 'Business structure: ' . $st_title;
+	}
+	if ( ! $is_struct && $f['service'] && ! in_array( $f['service'], $is_job ? ggs_position_choices() : ggs_service_choices(), true ) ) {
 		$f['service'] = 'Other';
 	}
 	if ( $is_job ) {
@@ -137,14 +155,21 @@ function ggs_handle_enquiry() {
 	set_transient( $ip_key, $count + 1, HOUR_IN_SECONDS );
 
 	$to = ggs_setting( 'enquiry_email' ) ? ggs_setting( 'enquiry_email' ) : ggs_setting( 'email' );
-	$body = "New enquiry from the website\n\n"
-		. "Name: {$f['name']}\nEmail: {$f['email']}\nPhone: {$f['phone']}\nService: {$f['service']}\nPreferred date: {$f['pref_date']}\n\n{$f['message']}\n\n"
+	if ( $is_struct ) {
+		$list = array_filter( array_map( 'trim', explode( ',', (string) ggs_setting( 'structure_emails' ) ) ), 'is_email' );
+		$to   = $list ? array_values( $list ) : $to;
+	}
+	$body = ( $is_struct ? 'New business structure enquiry (' . $st_title . ") from the website\n\n" : "New enquiry from the website\n\n" )
+		. "Name: {$f['name']}\nEmail: {$f['email']}\nPhone: {$f['phone']}\n"
+		. ( $is_struct ? "Address: {$f['address']}\nStructure: {$st_title}\n\nRequirement:\n" : "Service: {$f['service']}\nPreferred date: {$f['pref_date']}\n\n" )
+		. "{$f['message']}\n\n"
 		. 'View in dashboard: ' . admin_url( 'post.php?post=' . $id . '&action=edit' );
 	$headers = array();
 	if ( is_email( $f['email'] ) ) {
 		$headers[] = 'Reply-To: ' . $f['name'] . ' <' . $f['email'] . '>';
 	}
-	wp_mail( $to, ( $is_job ? 'Job application: ' : 'Website enquiry: ' ) . $f['name'], $body, $headers );
+	$subject = $is_job ? 'Job application: ' . $f['name'] : ( $is_struct ? 'Business structure enquiry (' . $st_title . '): ' . $f['name'] : 'Website enquiry: ' . $f['name'] );
+	wp_mail( $to, $subject, $body, $headers );
 
 	$go( 'sent' );
 }

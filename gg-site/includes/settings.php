@@ -23,6 +23,7 @@ function ggs_setting_defaults() {
 		'staff_url'     => '',
 		'announcement'  => '',
 		'enquiry_email' => '',
+		'structure_emails' => 'mail@ggassociates.in, raghav@ggassociates.in',
 	);
 }
 
@@ -54,6 +55,9 @@ function ggs_sanitize_settings( $in ) {
 			$out[ $key ] = sanitize_email( $v );
 		} elseif ( in_array( $key, array( 'address', 'branch', 'hours' ), true ) ) {
 			$out[ $key ] = sanitize_textarea_field( $v );
+		} elseif ( 'structure_emails' === $key ) {
+			$list        = array_filter( array_map( 'sanitize_email', array_map( 'trim', explode( ',', (string) $v ) ) ), 'is_email' );
+			$out[ $key ] = $list ? implode( ', ', $list ) : $def;
 		} elseif ( 'whatsapp' === $key ) {
 			$out[ $key ] = preg_replace( '/\D/', '', $v );
 		} else {
@@ -81,6 +85,7 @@ function ggs_settings_page() {
 		'map_query'     => array( 'Address for the Google Map', 'text' ),
 		'announcement'  => array( 'Announcement bar text (leave empty to hide)', 'text' ),
 		'enquiry_email' => array( 'Send website enquiries to (default: main email)', 'email' ),
+		'structure_emails' => array( 'Send business-structure enquiries to (separate addresses with commas)', 'text' ),
 		'staff_url'     => array( 'Office Staff Login link (leave empty to hide until the staff area is live)', 'url' ),
 	);
 	$opts = get_option( 'ggs_settings', array() );
