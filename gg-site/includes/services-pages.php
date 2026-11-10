@@ -41,6 +41,19 @@ add_shortcode( 'gg_service_page', function ( $atts ) {
 	}
 	$o .= '</div></div>';
 	$o .= '<nav class="gg-chips" aria-label="Sections"><a href="#what"><span>01</span> What we do</a><a href="#who"><span>02</span> Who needs it</a><a href="#how"><span>03</span> How we work</a><a href="#enquiry-box"><span>04</span> Send your requirement</a></nav>';
+	if ( ! empty( $it['compare'] ) ) {
+		$rows = $it['compare'];
+		$head = array_shift( $rows );
+		$o   .= '<section class="gg-hub-sec sv-compare" id="changes"><h2>' . esc_html( $it['compare_title'] ?? 'What changed' ) . '</h2><div class="gs-table-wrap"><table class="gg-table"><thead><tr>';
+		foreach ( $head as $h ) {
+			$o .= '<th scope="col">' . esc_html( $h ) . '</th>';
+		}
+		$o .= '</tr></thead><tbody>';
+		foreach ( $rows as $r ) {
+			$o .= '<tr><th scope="row">' . esc_html( $r[0] ) . '</th><td>' . esc_html( $r[1] ) . '</td><td><strong>' . esc_html( $r[2] ) . '</strong></td></tr>';
+		}
+		$o .= '</tbody></table></div><p class="gg-note">Source: Income Tax Department, FAQs on Form No. 105 (Income-tax Act, 2025 and Income-tax Rules, 2026).</p></section>';
+	}
 	$o .= '<section class="gg-hub-sec" id="what"><h2><span class="gg-num">01</span> What we do</h2><div class="sv-items">';
 	foreach ( $it['items'] as $i => $row ) {
 		$o .= '<div class="sv-item"><span class="sv-n">' . sprintf( '%02d', $i + 1 ) . '</span><h3>' . esc_html( $row[0] ) . '</h3><p>' . esc_html( $row[1] ) . '</p></div>';
