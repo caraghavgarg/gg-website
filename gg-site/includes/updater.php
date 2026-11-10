@@ -59,7 +59,7 @@ add_filter( 'pre_set_site_transient_update_plugins', function ( $transient ) {
 			'plugin'      => $file,
 			'new_version' => $remote['gg-site'],
 			'url'         => 'https://github.com/caraghavgarg/gg-website',
-			'package'     => GGS_UPDATE_BASE . 'gg-site.zip',
+			'package'     => GGS_UPDATE_BASE . 'gg-site.zip?v=' . rawurlencode( $remote['gg-site'] ),
 		);
 	} elseif ( isset( $transient->response[ $file ] ) ) {
 		unset( $transient->response[ $file ] );
@@ -81,7 +81,7 @@ add_filter( 'pre_set_site_transient_update_themes', function ( $transient ) {
 			'theme'       => 'gg-theme',
 			'new_version' => $remote['gg-theme'],
 			'url'         => 'https://github.com/caraghavgarg/gg-website',
-			'package'     => GGS_UPDATE_BASE . 'gg-theme.zip',
+			'package'     => GGS_UPDATE_BASE . 'gg-theme.zip?v=' . rawurlencode( $remote['gg-theme'] ),
 		);
 	}
 	return $transient;
