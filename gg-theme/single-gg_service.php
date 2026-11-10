@@ -14,7 +14,7 @@ while ( have_posts() ) :
 				<div class="aside-card aside-card--gold">
 					<h2>Discuss your requirement</h2>
 					<p>Tell us what you need and we will arrange a meeting or a call.</p>
-					<a class="gg-btn gg-btn--gold" href="<?php echo esc_url( home_url( '/contact/#enquiry' ) ); ?>">Request an appointment</a>
+					<a class="gg-btn gg-btn--gold" href="#enquiry-box">Send your requirement</a>
 				</div>
 				<?php if ( $hub ) : ?>
 					<div class="aside-card"><h2>Law &amp; forms</h2><ul><li><a href="<?php echo esc_url( home_url( '/' . $hub[0] . '/' ) ); ?>"><?php echo esc_html( $hub[1] ); ?> →</a></li></ul></div>

@@ -1,0 +1,166 @@
+{
+ "order": ["audit-assurance", "tax-advice-planning", "tax-notices-appeals", "tax-returns-compliance", "loan-project-reports", "accounting-bookkeeping", "company-llp-compliance"],
+ "old_slugs": {
+  "direct-taxation": "tax-advice-planning",
+  "litigation-representation": "tax-notices-appeals",
+  "gst": "tax-returns-compliance",
+  "financial-advisory": "loan-project-reports",
+  "corporate-law-roc-compliance": "company-llp-compliance"
+ },
+ "retire": ["business-consultancy"],
+ "items": {
+  "audit-assurance": {
+   "title": "Audit & Assurance",
+   "img": "audit",
+   "icon": "scale",
+   "hub": ["mca-roc", "MCA & ROC: Acts, Rules & Forms"],
+   "tags": "Tax Audit, GST Audit, Statutory Audit, Internal Audit",
+   "excerpt": "Tax audit, GST audit and reconciliation, statutory audit of companies, LLPs, trusts and societies, and internal audit to tighten controls.",
+   "intro": [
+    "An audit is an independent check that your accounts are complete, correct and follow the law. Some audits are compulsory once your business crosses certain limits; others are simply good practice before a bank, investor or tax officer looks at your books.",
+    "Our firm has carried out audits since 1984 and is empanelled with the Reserve Bank of India and the Comptroller & Auditor General of India for bank and government audits."
+   ],
+   "items": [
+    ["Tax Audit", "Required under the Income-tax Act when business turnover exceeds ₹1 crore (₹10 crore if cash receipts and payments are each within 5%), or a professional's receipts exceed ₹50 lakh. From Tax Year 2026-27 the report is in Form 26; earlier years use Forms 3CA/3CB and 3CD."],
+    ["GST Audit & Reconciliation", "Annual return (GSTR-9) and the reconciliation statement (GSTR-9C) for businesses with turnover above ₹5 crore, plus a GST health check of tax paid, input tax credit and e-invoices before the department's own audit."],
+    ["Statutory Audit", "Annual audit of companies (compulsory for every company), LLPs above the turnover or contribution limits, co-operative societies, trusts and societies, with the auditor's report and required certificates."],
+    ["Internal Audit", "Regular review of purchases, sales, stock, payments and controls. Compulsory for certain larger companies; useful for any growing business that wants to prevent leakages and errors."]
+   ],
+   "who": ["Businesses and professionals crossing the tax audit limits", "Every company, and LLPs above the audit limits", "GST-registered businesses with turnover above ₹5 crore", "Trusts, societies, schools, hospitals and co-operatives", "Owners who want an independent check before taking a loan or bringing in investors"],
+   "how": [["Plan", "We understand the business, agree the scope and share a document list."], ["Examine", "We test books, bank statements, stock, GST and TDS records, and discuss differences with you."], ["Report", "We issue the audit report and a management letter listing issues found and how to fix them."], ["File", "We upload the report on the income tax, GST or MCA portal before the due date."]],
+   "faq": [["When is the tax audit due?", "The tax audit report is generally due by 30 September after the end of the financial year, before the income tax return."], ["Is an audit needed if my company had no business?", "Yes. Every company must have its accounts audited every year, even with no turnover."]]
+  },
+  "tax-advice-planning": {
+   "title": "Tax Advice & Planning",
+   "img": "advice",
+   "icon": "doc",
+   "hub": ["income-tax", "Income Tax: Acts, Rules & Forms"],
+   "tags": "Income Tax Planning, GST Advice, NRI Taxation, Capital Gains",
+   "excerpt": "Clear advice on income tax and GST before you act: tax planning, capital gains, NRI matters, business structuring and the new Income-tax Act, 2025.",
+   "intro": [
+    "Good tax advice is given before a decision, not after it. We explain how a transaction will be taxed, what choices you have, and which option costs least while staying fully within the law.",
+    "From 1 April 2026 the Income-tax Act, 2025 replaces the 1961 Act. We help clients understand what has changed for their returns, deductions and compliance."
+   ],
+   "items": [
+    ["Income Tax Planning", "Choosing between the old and new tax regimes, salary structuring, deductions, advance tax and planning for the year ahead."],
+    ["Capital Gains & Property", "Sale of property, shares or a business, exemptions on reinvestment, joint ownership and TDS on property purchase."],
+    ["GST Advice", "Whether GST applies, the right rate and HSN/SAC, input tax credit, reverse charge, exports and place-of-supply questions."],
+    ["NRI & Foreign Income", "Residential status, DTAA relief, tax on foreign income, repatriation of funds and certificates for foreign remittances."],
+    ["Business Structuring", "Tax impact of choosing a proprietorship, firm, LLP or company, and of conversions, mergers or succession in family businesses."]
+   ],
+   "who": ["Salaried individuals and senior citizens", "Business owners and professionals", "Families planning property sales or succession", "NRIs with income or assets in India", "Start-ups choosing a structure"],
+   "how": [["Listen", "We understand your situation, documents and goals."], ["Analyse", "We work out the tax effect of each option with figures."], ["Advise", "You receive a clear written note with our recommendation."], ["Implement", "We help with the paperwork, filings and follow-up."]],
+   "faq": [["Old regime or new regime?", "It depends on your income and deductions. We compute both and recommend the lower one each year."], ["Can I ask a one-time question?", "Yes. Send your requirement and we will arrange a consultation."]]
+  },
+  "tax-notices-appeals": {
+   "title": "Tax Notices, Assessments & Appeals",
+   "img": "notices",
+   "icon": "case",
+   "hub": ["income-tax", "Income Tax: Acts, Rules & Forms"],
+   "tags": "Income Tax Notices, GST Notices, Assessments, Appeals",
+   "excerpt": "We represent you before the Income Tax and GST departments: replies to notices, scrutiny and reassessment, demand and refund matters, and appeals.",
+   "intro": [
+    "A notice from the tax department needs a careful, timely reply. We read the notice, collect the evidence, draft the reply and represent you before the officer, so that the matter is closed with the least tax, interest and penalty.",
+    "We handle notices under both the Income-tax and GST laws, at every stage from the first notice to appeals."
+   ],
+   "items": [
+    ["Income Tax Notices", "Defective return, mismatch, rectification, CPC intimations, demand and refund issues, and notices for non-filing."],
+    ["Scrutiny & Reassessment", "Faceless and regular assessments, reopening of past years, and inquiries into cash deposits, loans or high-value transactions."],
+    ["GST Notices & Audits", "Scrutiny of returns, input tax credit mismatches, departmental audits, show cause notices and summons."],
+    ["Appeals", "Appeals before the Commissioner (Appeals) and the Appellate Tribunal, with written submissions and personal hearings."],
+    ["Penalty & Prosecution Matters", "Replies to penalty notices, compounding applications and settlement options."]
+   ],
+   "who": ["Anyone who has received an income tax or GST notice", "Businesses facing a GST department audit or inquiry", "Taxpayers with a demand they believe is wrong", "Trusts and charitable institutions with registration or exemption issues"],
+   "how": [["Review", "Send us the notice; we tell you what it asks, the deadline and the risk."], ["Collect", "We list the documents and explanations needed."], ["Reply", "We draft and file the reply on the portal, or appear before the officer."], ["Follow up", "We track the matter until the order, and file an appeal if needed."]],
+   "faq": [["How soon should I act on a notice?", "Immediately. Most notices give 7 to 30 days to reply, and an extension must be asked for before the deadline."], ["Can you appear for me?", "Yes. With your authorisation we file replies and attend hearings, including faceless proceedings online."]]
+  },
+  "tax-returns-compliance": {
+   "title": "Tax Returns & Compliance",
+   "img": "returns",
+   "icon": "cal",
+   "hub": ["gst", "GST: Acts, Rules & Forms"],
+   "tags": "ITR Filing, GST Returns, TDS Returns, Registrations",
+   "excerpt": "Income tax returns, GST registration and returns, TDS and TCS returns, and every recurring filing on time, so you never pay late fees.",
+   "intro": [
+    "Most penalties come from missed dates, not from wrong tax. We take over your recurring filings, keep a calendar for each client and remind you before every due date.",
+    "Our Due Date Calendar on this website lists the main monthly and annual dates."
+   ],
+   "items": [
+    ["Income Tax Returns", "Returns for individuals, HUFs, firms, LLPs, companies and trusts, advance tax working and refund follow-up."],
+    ["GST Registration & Returns", "New registration, amendments, GSTR-1, GSTR-3B, annual returns, e-invoice and e-way bill set-up, and cancellation."],
+    ["TDS & TCS", "Deduction rates, monthly deposits, quarterly statements, certificates to deductees and correction of defaults."],
+    ["Other Registrations", "PAN, TAN, Udyam (MSME), professional tax, shop and establishment, and Import Export Code."],
+    ["Compliance Calendar", "A yearly calendar of your filings with reminders, so nothing is missed."]
+   ],
+   "who": ["Salaried and self-employed individuals", "Traders, manufacturers and service providers registered under GST", "Employers and businesses deducting TDS", "Firms, LLPs, companies and trusts"],
+   "how": [["Set up", "We collect registrations and logins and prepare your compliance calendar."], ["Collect", "Each month you share sales, purchases and payments in the format we agree."], ["File", "We prepare, check and file returns, and send you the acknowledgements."], ["Reconcile", "We match returns with books and portals to catch differences early."]],
+   "faq": [["What if I have missed a return?", "Most returns can still be filed with a late fee or interest. File as soon as possible to stop the fee growing."], ["Do I need GST registration?", "It depends on your turnover, the nature of supplies and whether you sell inter-state or online. We check and advise."]]
+  },
+  "loan-project-reports": {
+   "title": "Loan & Project Reports",
+   "img": "finance",
+   "icon": "grow",
+   "hub": ["finance", "Finance: RBI, SEBI, FEMA & IBC"],
+   "tags": "Project Report, CMA Data, Projected Financials, Provisional Financials",
+   "excerpt": "Bank-ready project reports, CMA data, projected and provisional financial statements for term loans, working capital, subsidies and investors.",
+   "intro": [
+    "Banks and lenders decide on the numbers you present. We prepare reports in the formats banks expect, with realistic assumptions that you can explain and achieve.",
+    "We also help with loan documentation and the bank's queries until the loan is sanctioned."
+   ],
+   "items": [
+    ["Project Report", "For new units, expansion or machinery loans and government subsidy schemes: cost of project, means of finance, profitability, repayment schedule, DSCR and break-even."],
+    ["CMA Data", "Credit Monitoring Arrangement data for working capital limits (cash credit, overdraft): past, current and projected figures in the bank's format, with ratio analysis."],
+    ["Projected Financials", "Projected balance sheet, profit and loss and cash flow for the coming years, for loans, investors, visas or tenders."],
+    ["Provisional Financials", "Accounts for the current year to date, before the audit, when a bank or authority needs up-to-date figures."],
+    ["Loan Support", "Help with documents, the bank's queries, renewal of limits and stock statements."]
+   ],
+   "who": ["Businesses applying for term loans or working capital limits", "MSMEs applying under government subsidy and credit schemes", "Start-ups presenting to investors", "Businesses renewing or enhancing bank limits"],
+   "how": [["Understand", "We discuss the project, costs, market and repayment capacity."], ["Build", "We prepare the financial model and the report in the lender's format."], ["Review", "We go through the assumptions with you so you can explain them to the bank."], ["Support", "We answer the bank's queries until sanction."]],
+   "faq": [["How long does a project report take?", "Usually a few working days once we have the quotations and basic information."], ["Is CMA data the same as a project report?", "No. CMA data is mainly for working capital limits; a project report is for a new project or term loan. Banks often ask for both."]]
+  },
+  "accounting-bookkeeping": {
+   "title": "Accounting & Bookkeeping",
+   "img": "accounting",
+   "icon": "calc",
+   "hub": ["gst", "GST: Acts, Rules & Forms"],
+   "tags": "Bookkeeping, Tally, Payroll, MIS Reports",
+   "excerpt": "Day-to-day bookkeeping, bank and GST reconciliations, payroll, and monthly reports, so your books are always ready for tax, audit and the bank.",
+   "intro": [
+    "Clean books make every other job easier and cheaper: returns, audits, loans and decisions. We keep your accounts up to date, reconciled and ready when you need them.",
+    "We work in Tally and other common accounting software, at your office or ours."
+   ],
+   "items": [
+    ["Bookkeeping", "Recording sales, purchases, expenses and payments, with ledgers kept current every month."],
+    ["Reconciliations", "Bank, GST (books with GSTR-2B and returns), TDS and party ledgers matched regularly."],
+    ["Payroll", "Salary sheets, PF and ESI working, TDS on salaries and employee records."],
+    ["Final Accounts", "Year-end closing, depreciation, adjustments and financial statements ready for audit and tax."],
+    ["MIS Reports", "Monthly profit, cash flow, receivables and stock reports to help you run the business."]
+   ],
+   "who": ["Small and medium businesses without a full-time accountant", "Professionals and service providers", "Businesses whose books are behind or need cleaning up", "Owners who want monthly figures to manage the business"],
+   "how": [["Set up", "We review your current books, chart of accounts and software."], ["Record", "You share bills and bank statements; we enter and reconcile them."], ["Report", "You receive monthly reports and a list of pending items."], ["Close", "At year-end we finalise accounts for audit and returns."]],
+   "faq": [["Can you work on my existing Tally data?", "Yes. We can work on your data at your office, remotely, or take it over completely."], ["My books are a year behind. Can you help?", "Yes. We bring old books up to date and then continue monthly."]]
+  },
+  "company-llp-compliance": {
+   "title": "Company & LLP Compliance (MCA / ROC)",
+   "img": "mca",
+   "icon": "bank",
+   "hub": ["mca-roc", "MCA & ROC: Acts, Rules & Forms"],
+   "tags": "Incorporation, ROC Filings, LLP, Secretarial",
+   "excerpt": "Company and LLP registration, annual ROC filings, director changes, share transfers, board resolutions and statutory registers.",
+   "intro": [
+    "Companies and LLPs must report to the Registrar of Companies through the Ministry of Corporate Affairs (MCA) portal. Late filings attract daily fees and can disqualify directors.",
+    "We handle incorporation, annual filings and every event-based change, and keep your statutory records in order. See also our Starting a Business pages to compare structures."
+   ],
+   "items": [
+    ["Incorporation", "Private limited companies, One Person Companies, LLPs and Section 8 (non-profit) companies, including name approval, DSC and DIN."],
+    ["Annual Filings", "Company: AOC-4, MGT-7/7A, DIR-3 KYC and auditor appointment. LLP: Form 8 and Form 11."],
+    ["Changes & Events", "Appointment or resignation of directors and partners, share allotment and transfer, increase in capital, change of name or registered office."],
+    ["Secretarial Records", "Board and general meeting minutes, resolutions, statutory registers and share certificates."],
+    ["Conversions & Closure", "Conversion of a firm or company into an LLP, and strike-off or closure of inactive companies and LLPs."]
+   ],
+   "who": ["Founders starting a company or LLP", "Existing companies and LLPs needing annual filings", "Businesses changing directors, partners or shareholding", "Inactive companies that want to close"],
+   "how": [["Check", "We review the MCA master data and pending filings."], ["Prepare", "We draft resolutions, forms and attachments."], ["Sign & file", "Directors sign with DSC; we file on the MCA portal."], ["Record", "We update registers and send you the approved forms."]],
+   "faq": [["What happens if annual filings are missed?", "A fee of ₹100 per day per form applies, and directors of companies that do not file for three years can be disqualified."], ["How long does incorporation take?", "Usually one to two weeks once documents and digital signatures are ready."]]
+  }
+ }
+}

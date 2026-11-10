@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'GGT_VER', '2.3.0' );
+define( 'GGT_VER', '2.5.0' );
 
 add_action( 'after_setup_theme', function () {
 	add_theme_support( 'title-tag' );
@@ -124,6 +124,12 @@ function ggt_icon( $id ) {
 
 /** Icon for each service (by its address). */
 function ggt_service_icon( $slug ) {
+	if ( function_exists( 'ggs_services_data' ) ) {
+		$d = ggs_services_data();
+		if ( ! empty( $d['items'][ $slug ]['icon'] ) ) {
+			return $d['items'][ $slug ]['icon'];
+		}
+	}
 	$map = array(
 		'direct-taxation'              => 'doc',
 		'gst'                          => 'chart',
@@ -314,6 +320,12 @@ function ggt_page_hero( $title, $lead = '', $crumbs = array() ) {
 
 /** Service → matching Acts & Rules page. */
 function ggt_service_hub( $slug ) {
+	if ( function_exists( 'ggs_services_data' ) ) {
+		$d = ggs_services_data();
+		if ( ! empty( $d['items'][ $slug ]['hub'] ) ) {
+			return $d['items'][ $slug ]['hub'];
+		}
+	}
 	$map = array(
 		'direct-taxation'              => array( 'income-tax', 'Income Tax: Acts, Rules & Forms' ),
 		'gst'                          => array( 'gst', 'GST: Acts, Rules & Forms' ),

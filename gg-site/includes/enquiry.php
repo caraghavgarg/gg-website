@@ -39,8 +39,9 @@ add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
 		$msg = '<div class="gg-alert gg-alert--err" role="alert">Too many requests from this connection. Please call or email us instead.</div>';
 	}
 	$opts = '';
+	$pre = ( is_array( $atts ) && ! empty( $atts['service'] ) ) ? (string) $atts['service'] : '';
 	foreach ( ( $careers ? ggs_position_choices() : ggs_service_choices() ) as $c ) {
-		$opts .= '<option>' . esc_html( $c ) . '</option>';
+		$opts .= '<option' . selected( html_entity_decode( $c ), html_entity_decode( $pre ), false ) . '>' . esc_html( $c ) . '</option>';
 	}
 	$action = esc_url( admin_url( 'admin-post.php' ) );
 	$token  = wp_create_nonce( 'ggs_enquiry' );

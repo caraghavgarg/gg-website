@@ -51,7 +51,7 @@ function ggs_setup_page() {
 		<p>This creates or updates:</p>
 		<ul style="list-style:disc;margin-left:20px">
 			<li>Pages: Home, About Us, Our Team, Services, Resources &amp; Publications, Contact Us, Calculators, Due Date Calendar, Acts &amp; Rules (with Income Tax, GST, MCA &amp; ROC, Labour Law and Others), Professional Resources.</li>
-			<li>Eight services, three partner profiles and the standard due dates (skipped if any already exist).</li>
+			<li>Seven services (updated to the latest wording each time), three partner profiles and the standard due dates (skipped if any already exist).</li>
 			<li>Post categories: Articles, Professional Updates, Notifications &amp; Circulars.</li>
 			<li>Menus: <em>Main Menu</em>, <em>Utilities Toolbar</em>, <em>Resources Bar</em>, and two empty spare bars (<em>Extra Bar A</em>, <em>Extra Bar B</em>) – edit them in Appearance → Menus. Each page can choose which bars it shows.</li>
 			<li>Sets Home as the front page and Resources &amp; Publications as the posts page; deactivates the older GG Knowledge Hub plugin.</li>
@@ -85,83 +85,6 @@ function ggs_block_list( $items, $class = '' ) {
 }
 function ggs_block_sc( $code ) {
 	return "<!-- wp:shortcode -->\n" . $code . "\n<!-- /wp:shortcode -->\n\n";
-}
-
-function ggs_services_seed() {
-	return array(
-		array(
-			'title' => 'Direct Taxation',
-			'slug'  => 'direct-taxation',
-			'tags'  => 'ITR Filing, Tax Planning, TDS/TCS, NRI & DTAA',
-			'excerpt' => 'Income tax planning, return preparation and filing for individuals, HUFs, firms and companies, TDS/TCS compliance, and NRI taxation.',
-			'body'  => ggs_block_p( 'We handle income tax for individuals, HUFs, firms, companies and trusts, from planning and return filing to assessments and refunds. Work for Tax Year 2026-27 onwards follows the Income-tax Act, 2025; earlier years continue under the Income-tax Act, 1961.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'Tax planning and computation of income', 'Preparation and filing of income tax returns', 'TDS and TCS compliance: deduction, deposit and quarterly statements', 'Scrutiny assessments, reassessment, rectification and refund matters', 'NRI tax filing, DTAA advisory, foreign remittances and repatriation of funds' ) ),
-		),
-		array(
-			'title' => 'GST',
-			'slug'  => 'gst',
-			'tags'  => 'GST Registration, GSTR Filing, ITC Reconciliation, GST Audit',
-			'excerpt' => 'GST registration, monthly and quarterly returns, reconciliations, input tax credit, GST audits and representation before GST authorities.',
-			'body'  => ggs_block_p( 'We manage GST compliance end to end for traders, manufacturers and service providers, and represent clients before GST authorities.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'GST registration, amendment and cancellation', 'Monthly and quarterly returns: GSTR-1, GSTR-3B; annual returns GSTR-9 and GSTR-9C', 'Reconciliation of purchases with GSTR-2B and input tax credit review', 'GST audits', 'Replies to notices, and appeals before GST authorities' ) ),
-		),
-		array(
-			'title' => 'Audit & Assurance',
-			'slug'  => 'audit-assurance',
-			'tags'  => 'Statutory Audit, Tax Audit, Bank Audit, Internal Audit',
-			'excerpt' => 'Statutory, tax, bank, concurrent, internal and special-purpose audits conducted with independence and professional scepticism.',
-			'body'  => ggs_block_p( 'Our audits are conducted with rigorous independence and professional scepticism. The firm is registered with RBI and CAG for government and banking audits.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'Statutory audits of companies and other entities', 'Tax audits', 'Bank audits and concurrent audits', 'Internal audits', 'Special-purpose audits and certifications' ) ),
-		),
-		array(
-			'title' => 'Litigation & Representation',
-			'slug'  => 'litigation-representation',
-			'tags'  => 'CIT(A), ITAT, GST Appeals, NCLT',
-			'excerpt' => 'Representation before income tax and GST authorities, CIT(A), ITAT, NCLT and Debt Recovery Tribunals, and replies to departmental notices.',
-			'body'  => ggs_block_p( 'We prepare replies and written submissions and appear for clients before tax authorities and tribunals.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'Replies to income tax and GST notices', 'Representation in scrutiny and reassessment proceedings', 'Appeals before CIT(A) and ITAT', 'GST appeals and representation before GST authorities', 'Representation before NCLT and Debt Recovery Tribunals', 'IBC advisory and representation in NCLT proceedings' ) ),
-		),
-		array(
-			'title' => 'Corporate Law & ROC Compliance',
-			'slug'  => 'corporate-law-roc-compliance',
-			'tags'  => 'Incorporation, ROC Filings, LLP, Secretarial Audit',
-			'excerpt' => 'Company and LLP incorporation, ROC and MCA21 filings, board resolutions, statutory registers, secretarial audit, and business registrations.',
-			'body'  => ggs_block_p( 'We set up and maintain companies and LLPs under the Companies Act, 2013 and the LLP Act, 2008, and handle the registrations a business needs to operate.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'Incorporation of private limited companies, OPCs, LLPs and Section 8 companies', 'Annual ROC filings and event-based MCA21 filings', 'Board and shareholder resolutions, statutory registers and minutes', 'Secretarial audit', 'Winding-up and strike-off proceedings', 'Registrations: MSME/Udyam, FSSAI, IEC, trademark, PAN/TAN, ESI/PF, professional tax, shops and establishments' ) ),
-		),
-		array(
-			'title' => 'Accounting & Bookkeeping',
-			'slug'  => 'accounting-bookkeeping',
-			'tags'  => 'Tally ERP, Payroll, MIS Reports, Financial Statements',
-			'excerpt' => 'Outsourced accounting, Tally/ERP implementation, payroll, bank reconciliations, Schedule III financial statements and MIS reporting.',
-			'body'  => ggs_block_p( 'We keep books accurate and up to date so that tax, GST and ROC filings follow without delay.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'Outsourced accounting and bookkeeping', 'Tally / ERP implementation', 'Payroll processing', 'Bank reconciliations', 'Financial statements as per Schedule III of the Companies Act, 2013', 'MIS reporting' ) ),
-		),
-		array(
-			'title' => 'Financial Advisory',
-			'slug'  => 'financial-advisory',
-			'tags'  => 'DPR & CMA Data, Loan Syndication, Valuation, FEMA',
-			'excerpt' => 'Project reports and CMA data, loan syndication, valuation under the Insolvency and Bankruptcy Code, and FEMA advisory.',
-			'body'  => ggs_block_p( 'We help businesses raise finance and take informed financial decisions.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'Detailed project reports (DPR) and CMA data', 'Loan syndication: term loans, working capital, MSME loans and government-sponsored schemes', 'Liaison with banks and financial institutions', 'Valuation of securities or financial assets (SFA) for stressed assets under the IBC', 'FEMA compliance and advisory, including NRI investments in India' ) ),
-		),
-		array(
-			'title' => 'Business Consultancy',
-			'slug'  => 'business-consultancy',
-			'tags'  => 'Due Diligence, Restructuring, Drafting, HR Advisory',
-			'excerpt' => 'Business advisory, restructuring, due diligence and feasibility studies, drafting of business agreements, and HR and labour-law advisory.',
-			'body'  => ggs_block_p( 'We advise businesses at every stage of growth, from feasibility to restructuring.' )
-				. ggs_block_h( 'What we do' )
-				. ggs_block_list( array( 'Business advisory and strategic financial planning', 'Financial restructuring and business valuation', 'Due diligence and feasibility studies', 'Drafting of contracts, partnership deeds, MOUs and agreements', 'HR policy drafting, salary structuring and manpower advisory', 'Labour-law compliance including PF, ESI and bonus' ) ),
-		),
-	);
 }
 
 function ggs_team_seed() {
@@ -336,25 +259,9 @@ function ggs_page_defs() {
 function ggs_run_setup( $replace ) {
 	$log = array();
 
-	// 1. Services.
-	$existing = get_posts( array( 'post_type' => 'gg_service', 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ) );
-	if ( ! $existing ) {
-		foreach ( ggs_services_seed() as $i => $s ) {
-			$id = wp_insert_post( array(
-				'post_type'    => 'gg_service',
-				'post_status'  => 'publish',
-				'post_title'   => $s['title'],
-				'post_name'    => $s['slug'],
-				'post_excerpt' => $s['excerpt'],
-				'post_content' => $s['body'],
-				'menu_order'   => $i + 1,
-			) );
-			update_post_meta( $id, '_gg_tags', $s['tags'] );
-		}
-		$log[] = 'Created 8 services.';
-	} else {
-		$log[] = 'Services already exist; left unchanged.';
-	}
+	// 1. Services: kept in line with data/services.json (renames old services, adds new, retires unused).
+	$sv    = ggs_sync_services();
+	$log[] = sprintf( 'Services: %d updated, %d created, %d moved to Trash.', $sv['updated'], $sv['created'], $sv['retired'] );
 
 	// 2. Team.
 	$existing = get_posts( array( 'post_type' => 'gg_team', 'post_status' => 'any', 'numberposts' => 1, 'fields' => 'ids' ) );
