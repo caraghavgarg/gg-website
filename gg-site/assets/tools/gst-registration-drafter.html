@@ -1,0 +1,857 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:dark;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#28292c;color:#fff}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>GST Registration Drafter</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="/wp-content/themes/gg-theme/assets/fonts.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&display=swap">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<style>
+/* Layout: two panes — data-entry form on the left, A4 "stamp paper" preview of each generated draft on the right; stacks on phones. */
+:root{
+  --bg:#28292c; --surface:#3b3d41; --ink:#ffffff; --muted:#c9ccd1; --line:#55585e;
+  --accent:#f36a17; --accent-ink:#ffffff; --accent-soft:rgba(243,106,23,.16);
+  --field:#303135;
+  --paper:#ffffff; --paper-ink:#1b1c1e; --paper-line:#d6d7da;
+  --miss:#ffd8b8; --miss-ink:#7a3300; --warn:#ff9a52; --danger:#ff8a80;
+  --f-ui:"Source Sans 3",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"Noticia Text",Georgia,serif;
+  --f-doc:"Source Serif 4",Georgia,"Times New Roman",serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
+  --r:3px; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-ui);font-size:14px;line-height:1.45}
+.wrap{max-width:1440px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 48px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:18px}
+h1{font-family:var(--f-head);font-weight:700;font-size:26px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);margin:4px 0 0;max-width:62ch}
+.tools{display:flex;flex-wrap:wrap;gap:8px}
+button,.btn{font:inherit;font-weight:600;font-size:13px;border-radius:var(--r);border:1px solid var(--line);background:var(--surface);color:var(--ink);padding:7px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+button.ghost{background:transparent}
+button.small{padding:4px 9px;font-size:12px}
+button.danger{color:var(--danger)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.grid{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:900px){.grid{grid-template-columns:minmax(0,1fr)}}
+.form{display:flex;flex-direction:column;gap:12px;min-width:0}
+.banner{background:var(--accent-soft);border:1px solid var(--accent);border-radius:var(--r);padding:10px 12px;display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.banner b{color:#ffb27d}
+details.sec{background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+details.sec>summary{list-style:none;cursor:pointer;padding:12px 14px;display:flex;align-items:baseline;gap:10px;font-weight:700}
+details.sec>summary::-webkit-details-marker{display:none}
+details.sec>summary .n{font-family:var(--f-mono);font-weight:500;color:#ff8f45;font-size:12px}
+details.sec>summary .hint{margin-left:auto;font-weight:400;color:var(--muted);font-size:12px}
+.body{padding:0 14px 14px;display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.row.three{grid-template-columns:90px repeat(2,minmax(0,1fr))}
+@media (max-width:440px){.row,.row.three{grid-template-columns:minmax(0,1fr)}}
+label.f{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:var(--muted);min-width:0}
+input,select,textarea{font:inherit;font-size:14px;font-weight:400;color:var(--ink);background:var(--field);border:1px solid var(--line);border-radius:5px;padding:7px 9px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:58px}
+input.mono{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.03em}
+.cons{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px}
+.cons label{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:5px;padding:8px 10px;cursor:pointer;font-weight:600;font-size:13px}
+.cons input{width:auto;accent-color:var(--accent)}
+.cons label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.person{border:1px solid var(--line);border-radius:5px;padding:10px;display:flex;flex-direction:column;gap:8px;background:var(--field)}
+.person input,.person select,.person textarea{background:var(--bg)}
+.person .ph{display:flex;justify-content:space-between;align-items:center;gap:8px;font-weight:700;font-size:13px}
+.chk{display:flex;gap:8px;align-items:center;font-size:13px;font-weight:500;color:var(--ink)}
+.chk input{width:auto;accent-color:var(--accent)}
+.note{font-size:12px;color:var(--muted)}
+.note.warn{color:var(--warn)}
+/* preview */
+.pv{position:sticky;top:env(safe-area-inset-top,0px);display:flex;flex-direction:column;gap:12px;min-width:0}
+@media (max-width:900px){.pv{position:static}}
+.pvbar{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;display:flex;flex-direction:column;gap:10px}
+.pvbar .head{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.pvbar .head h2{margin:0;font-size:15px}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{border:1px solid var(--line);border-radius:999px;padding:5px 11px 5px 6px;font-size:12.5px;font-weight:600;background:var(--bg);display:inline-flex;gap:7px;align-items:center}
+.tab .code{font-family:var(--f-mono);font-size:11px;background:var(--surface);border:1px solid var(--line);border-radius:999px;min-width:22px;height:20px;display:inline-grid;place-items:center;padding:0 5px}
+.tab[aria-selected="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.tab[aria-selected="true"] .code{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tab .miss-count{font-size:11px;color:var(--warn);font-weight:700}
+.stage{overflow-x:auto;border-radius:var(--r)}
+.paper{background:var(--paper);color:var(--paper-ink);font-family:var(--f-doc);font-size:15px;line-height:1.6;width:100%;max-width:820px;margin:0 auto;padding:56px 64px 64px;border:1px solid var(--paper-line);box-shadow:0 1px 2px rgba(0,0,0,.06),0 8px 28px rgba(20,40,35,.08);min-height:600px}
+@media (max-width:600px){.paper{padding:28px 20px;font-size:14px}}
+.paper p{margin:0 0 .75em}
+.paper .title{text-align:center;font-weight:700;text-decoration:underline;letter-spacing:.04em;margin-bottom:1.2em}
+.paper .center{text-align:center}
+.paper .right{text-align:right}
+.paper .lines p{margin:0}
+.paper .lines{margin-bottom:.9em}
+.paper ol{padding-left:1.6em;margin:0 0 .9em}
+.paper li{margin-bottom:.4em}
+.paper .note{font-style:italic;color:#55585e;font-size:.9em;font-family:var(--f-doc)}
+.paper table{border-collapse:collapse;width:100%;margin:.4em 0 1em;font-size:.92em}
+.paper th,.paper td{border:1px solid #8d8a7e;padding:6px 8px;text-align:left;vertical-align:top}
+.paper th{background:#eceef1}
+.paper .sig{margin:1.6em 0 1em}
+.paper .sig.r{text-align:right}
+.paper .sig p{margin:0}
+.paper .gap{height:1.2em}
+.paper mark.miss{background:var(--miss);color:var(--miss-ink);padding:0 3px;border-radius:2px;font-family:var(--f-ui);font-size:.82em;font-weight:600}
+.status{font-size:12.5px;color:var(--muted);min-height:1.2em}
+.status.ok{color:#ffb27d}
+.status.err{color:var(--danger)}
+.legend{display:flex;gap:6px;align-items:center;font-size:12px;color:var(--muted)}
+.legend mark{background:var(--miss);color:var(--miss-ink);padding:0 4px;border-radius:2px;font-weight:600}
+@media (prefers-reduced-motion:no-preference){.tab,button{transition:border-color .12s,background .12s}}
+</style>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <h1>GST Registration Drafter</h1>
+      <p class="sub">Free tool by Garg Garg &amp; Associates, Chartered Accountants. Nothing you type is sent to us or kept after you leave the page; use “Save client data” to keep a copy. Fill the client's details once. The tool picks the documents required under Circular 257/03/2026-GST for that constitution and premises, and drafts each one ready for Word.</p>
+    </div>
+    <div class="tools">
+      <button id="btnSaveData" class="ghost" type="button">Save client data</button>
+      <label class="btn ghost" for="fileLoad" style="cursor:pointer">Load client data</label>
+      <input id="fileLoad" type="file" accept=".json,application/json" hidden>
+      <button id="btnNew" class="ghost" type="button">New client</button>
+    </div>
+  </header>
+
+  <div class="grid">
+    <form class="form" id="form" autocomplete="off">
+      <div class="banner" id="exampleBanner" hidden>
+        <span><b>Example data loaded.</b> Names and PANs are samples to show how drafts fill in.</span>
+        <button type="button" class="small" id="btnClearExample">Clear and start</button>
+      </div>
+
+      <details class="sec" open>
+        <summary><span class="n">01</span>Constitution of business</summary>
+        <div class="body">
+          <div class="cons" id="consList"></div>
+        </div>
+      </details>
+
+      <details class="sec" open>
+        <summary><span class="n">02</span>Business details</summary>
+        <div class="body">
+          <label class="f">Legal name (exactly as per PAN)<input id="e_legal" data-k="entity.legal"></label>
+          <div class="row">
+            <label class="f">Trade name<input id="e_trade" data-k="entity.trade"></label>
+            <label class="f">PAN of business<input id="e_pan" class="mono" data-k="entity.pan" maxlength="10"></label>
+          </div>
+          <div class="row" id="regRow">
+            <label class="f"><span id="regLabel">Registration no.</span><input id="e_reg" data-k="entity.reg"></label>
+            <label class="f"><span id="regDateLabel">Date of deed / incorporation</span><input id="e_regDate" type="date" data-k="entity.regDate"></label>
+          </div>
+          <label class="f">Principal place of business (full address with PIN)<textarea id="e_ppob" data-k="entity.ppob"></textarea></label>
+          <label class="f">Additional places of business (optional)<input id="e_apob" data-k="entity.apob"></label>
+          <div class="row">
+            <label class="f">State<input id="e_state" data-k="entity.state"></label>
+            <label class="f">GST jurisdiction / Ward<input id="e_jur" data-k="entity.jur"></label>
+          </div>
+          <div class="row">
+            <label class="f">Place of signing<input id="e_place" data-k="entity.place"></label>
+            <label class="f">Date of documents<input id="e_date" type="date" data-k="entity.date"></label>
+          </div>
+        </div>
+      </details>
+
+      <details class="sec" open>
+        <summary><span class="n">03</span><span id="personsTitle">Persons</span><span class="hint" id="personsHint"></span></summary>
+        <div class="body">
+          <div id="personsList" style="display:flex;flex-direction:column;gap:10px"></div>
+          <button type="button" id="btnAddPerson">+ Add person</button>
+          <p class="note">Add the authorised signatory here too. Untick "Promoter" for a signatory who is an employee or accountant, so they stay out of the partner/director lists.</p>
+        </div>
+      </details>
+
+      <details class="sec" open>
+        <summary><span class="n">04</span>Authorised signatory</summary>
+        <div class="body">
+          <label class="f">Primary authorised signatory<select id="s_sig" data-k="sigId" data-person></select></label>
+          <label class="f" id="signerWrap"><span id="signerLabel">Signed on behalf of the entity by</span><select id="s_signer" data-k="signerId" data-person></select></label>
+          <p class="note" id="sigNote"></p>
+        </div>
+      </details>
+
+      <details class="sec" open id="meetSec">
+        <summary><span class="n">05</span><span id="meetTitle">Board meeting</span></summary>
+        <div class="body">
+          <div class="row">
+            <label class="f">Meeting date<input id="m_date" type="date" data-k="meet.date"></label>
+            <label class="f">Time<input id="m_time" data-k="meet.time" placeholder="11:00 A.M."></label>
+          </div>
+          <label class="f">Venue (blank = principal place of business)<input id="m_venue" data-k="meet.venue"></label>
+        </div>
+      </details>
+
+      <details class="sec" open>
+        <summary><span class="n">06</span>Premises (PPoB)</summary>
+        <div class="body">
+          <label class="f">Nature of premises<select id="p_type" data-k="prem.type"></select></label>
+          <p class="note" id="premNote"></p>
+          <div id="ownersWrap" style="display:flex;flex-direction:column;gap:10px">
+            <div id="ownersList" style="display:flex;flex-direction:column;gap:10px"></div>
+            <button type="button" id="btnAddOwner">+ Add co-owner</button>
+          </div>
+          <div id="consentWrap" class="body" style="padding:0">
+            <label class="f">Owner's relationship with the applicant<input id="p_relationship" data-k="prem.relationship" placeholder="father / spouse / partner / director"></label>
+            <label class="f">Extent of use<select id="p_scope" data-k="prem.scope"><option value="entire">Entire premises</option><option value="portion">Earmarked portion only</option></select></label>
+            <label class="f" id="portionWrap">Portion allotted<input id="p_portion" data-k="prem.portion" placeholder="Ground floor front room, approx. 200 sq. ft."></label>
+          </div>
+          <div id="possWrap">
+            <label class="f">In possession since (month / year)<input id="p_since" data-k="prem.since" placeholder="April 2024"></label>
+          </div>
+          <div id="inheritWrap" class="body" style="padding:0">
+            <div class="row">
+              <label class="f">Name of deceased ancestor<input id="p_deceased" data-k="prem.deceased"></label>
+              <label class="f">Date of death<input id="p_dod" type="date" data-k="prem.dod"></label>
+            </div>
+          </div>
+          <div id="deponentWrap">
+            <label class="f" id="deponentLabel">Deponent<select id="p_deponent" data-k="deponentId" data-person></select></label>
+          </div>
+        </div>
+      </details>
+
+      <details class="sec" open id="rentSec">
+        <summary><span class="n">07</span>Rent agreement terms</summary>
+        <div class="body">
+          <label class="chk"><input type="checkbox" id="r_make" data-k="rent.make">Draft a rent agreement</label>
+          <label class="f">Description of premises let out<input id="r_desc" data-k="rent.desc" placeholder="Shop No. 4, ground floor, area approx. 250 sq. ft."></label>
+          <div class="row">
+            <label class="f">Monthly rent (Rs.)<input id="r_rent" data-k="rent.rent" inputmode="numeric"></label>
+            <label class="f">Security deposit (Rs.)<input id="r_deposit" data-k="rent.deposit" inputmode="numeric"></label>
+          </div>
+          <div class="row">
+            <label class="f">Start date<input id="r_start" type="date" data-k="rent.start"></label>
+            <label class="f">Term (months)<input id="r_months" data-k="rent.months" inputmode="numeric"></label>
+          </div>
+          <div class="row">
+            <label class="f">Rent due by (day of month)<input id="r_due" data-k="rent.due" placeholder="7th"></label>
+            <label class="f">Notice period (months)<input id="r_notice" data-k="rent.notice" inputmode="numeric"></label>
+          </div>
+        </div>
+      </details>
+    </form>
+
+    <section class="pv" aria-label="Generated documents">
+      <div class="pvbar">
+        <div class="head">
+          <h2 id="docCount">Documents</h2>
+          <div class="tools">
+            <button type="button" id="btnCopy">Copy text</button>
+            <button type="button" id="btnDocx">This draft (.docx)</button>
+            <button type="button" id="btnAll" class="primary">All drafts (.docx)</button>
+            <button type="button" id="btnZip">Separate files (.zip)</button>
+          </div>
+        </div>
+        <div class="tabs" id="tabs" role="tablist"></div>
+        <div class="head">
+          <span class="legend"><mark>Field</mark> still to fill — prints as [Field] highlighted in Word</span>
+          <span class="status" id="status" role="status"></span>
+        </div>
+      </div>
+      <div class="stage"><article class="paper" id="paper"></article></div>
+    </section>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+/* ---------------- constitution config ---------------- */
+const CONS = {
+  prop:   {label:"Proprietorship", role:"Proprietor", plural:"Proprietor", reg:null, auth:"A"},
+  huf:    {label:"HUF", role:"Karta", plural:"Karta", reg:null, auth:"A"},
+  firm:   {label:"Partnership firm", role:"Partner", plural:"Partners", reg:"Firm registration no. (RoF, if any)", regDate:"Date of partnership deed", auth:"B"},
+  llp:    {label:"LLP", role:"Designated Partner", plural:"Designated partners", reg:"LLPIN", regDate:"Date of incorporation", din:true, auth:"B"},
+  company:{label:"Company", role:"Director", plural:"Directors", reg:"CIN", regDate:"Date of incorporation", din:true, auth:"CD", body:"Board of Directors", meetName:"Board meeting"},
+  trust:  {label:"Trust", role:"Trustee", plural:"Trustees", reg:"Trust registration no.", regDate:"Date of trust deed", auth:"CD", body:"Board of Trustees", meetName:"Trustees' meeting"},
+  society:{label:"Society / AOP / Co-op", role:"Committee Member", plural:"Managing Committee members", reg:"Registration no.", regDate:"Date of registration", auth:"CD", body:"Managing Committee", meetName:"Managing Committee meeting"},
+  govt:   {label:"Govt / Local Authority / PSU", role:"Officer", plural:"Officers in charge", reg:"Notification / constitution ref.", regDate:"Date of constitution", auth:"D"}
+};
+const PREM = {
+  own:        {label:"Owned by the applicant", docs:["Any one document in the applicant's own name: latest property tax receipt / municipal khata copy / property ID document / latest electricity bill / latest water bill"], owners:false},
+  inherited:  {label:"Owned by deceased ancestor (nothing in applicant's name)", docs:["Death certificate of the deceased owner","Affidavit on non-judicial stamp paper of Rs. 100 (Annexure-IV) — drafted","Any one ownership document in the name of the deceased or the applicant"], owners:false},
+  rent_reg:   {label:"Rented — registered rent / lease deed", docs:["Registered rent / lease agreement (no other document needed)"], owners:false},
+  rent_unreg: {label:"Rented — unregistered rent agreement", docs:["Rent agreement — drafted","Any one ownership document in the landlord's name (or electricity / water bill in the tenant's name)"], owners:true},
+  rent_none:  {label:"Rented — no rent agreement", docs:["Undertaking (Annexure-V) — drafted","Any one document in the applicant's or owner's name, e.g. latest electricity bill"], owners:true},
+  consent:    {label:"Owned by relative / partner / director (consent)", docs:["Consent letter (Annexure-VI) signed by every co-owner — drafted","Any one ownership document in the consenter's name"], owners:true},
+  shared:     {label:"Shared premises (earmarked portion)", docs:["Consent letter (Annexure-VI) describing the demarcated portion — drafted","Any one ownership document in the owner's name"], owners:true},
+  coworking:  {label:"Co-working space", docs:["Membership / service agreement showing desk or cabin number","Ownership document of the provider, or registered lease between owner and provider"], owners:false},
+  sez:        {label:"SEZ unit / developer", docs:["Letter of Approval / Permission from the Development Commissioner"], owners:false}
+};
+
+/* ---------------- state ---------------- */
+const uid = () => Math.random().toString(36).slice(2,9);
+const today = () => { const d=new Date(); return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); };
+function blankPerson(promoter){ return {id:uid(),title:"Shri",name:"",rel:"S/o",father:"",pan:"",din:"",desig:"",age:"",address:"",mobile:"",promoter:promoter!==false}; }
+function blankOwner(){ return {id:uid(),title:"Shri",name:"",rel:"S/o",father:"",address:"",pan:"",mobile:""}; }
+function blankState(){
+  const p = blankPerson(true);
+  return {example:false, cons:"prop",
+    entity:{legal:"",trade:"",pan:"",reg:"",regDate:"",ppob:"",apob:"",state:"Haryana",jur:"",place:"",date:today()},
+    persons:[p], sigId:p.id, signerId:p.id, deponentId:p.id,
+    meet:{date:"",time:"",venue:""},
+    prem:{type:"own",owners:[blankOwner()],relationship:"",scope:"entire",portion:"",since:"",deceased:"",dod:""},
+    rent:{make:true,desc:"",rent:"",deposit:"",start:"",months:"11",due:"7th",notice:"1"}};
+}
+function exampleState(){
+  const a={id:uid(),title:"Shri",name:"Ramesh Kumar",rel:"S/o",father:"Om Prakash",pan:"ABCPK1234A",din:"",desig:"Managing Partner",age:"42",address:"House No. 112, Sector 7, Kurukshetra, Haryana – 136118",mobile:"98xxxxxx01",promoter:true};
+  const b={id:uid(),title:"Smt.",name:"Sunita Devi",rel:"W/o",father:"Ramesh Kumar",pan:"ABCPD5678B",din:"",desig:"Partner",age:"39",address:"House No. 112, Sector 7, Kurukshetra, Haryana – 136118",mobile:"98xxxxxx02",promoter:true};
+  return {example:true, cons:"firm",
+    entity:{legal:"Sample Agro Traders",trade:"Sample Agro Traders",pan:"ABCFS1234K",reg:"",regDate:"2026-10-15",ppob:"Shop No. 4, New Grain Market, Pipli Road, Kurukshetra, Haryana – 136118",apob:"",state:"Haryana",jur:"Kurukshetra Ward 1 (State) / Range Kurukshetra (Centre)",place:"Kurukshetra",date:today()},
+    persons:[a,b], sigId:a.id, signerId:a.id, deponentId:a.id,
+    meet:{date:"",time:"",venue:""},
+    prem:{type:"consent",owners:[{id:uid(),title:"Shri",name:"Om Prakash",rel:"S/o",father:"Ram Lal",address:"House No. 112, Sector 7, Kurukshetra, Haryana – 136118",pan:"ABCPP9012C",mobile:"98xxxxxx03"}],relationship:"father of the Managing Partner",scope:"entire",portion:"",since:"",deceased:"",dod:""},
+    rent:{make:true,desc:"",rent:"",deposit:"",start:"",months:"11",due:"7th",notice:"1"}};
+}
+const LS="gst-reg-drafter-v1";
+let S;
+/* Public website: nothing is kept between visits. Remove anything stored by earlier versions. */
+try{ localStorage.removeItem(LS); }catch(e){}
+S = Object.assign(blankState(), exampleState());
+function persist(){}
+
+/* ---------------- helpers ---------------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const M1="\u0001", M2="\u0002";
+const V = (v,label) => (v!==undefined && v!==null && String(v).trim()!=="") ? String(v).trim() : M1+label+M2;
+const has = v => v!==undefined && v!==null && String(v).trim()!=="";
+function dmy(iso){ if(!has(iso)) return ""; const [y,m,d]=iso.split("-"); return d+"/"+m+"/"+y; }
+const MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+function ord(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+function longDate(iso){ if(!has(iso)) return ""; const [y,m,d]=iso.split("-").map(Number); return ord(d)+" day of "+MONTHS[m-1]+", "+y; }
+function addMonths(iso,n){ if(!has(iso)||!has(n)) return ""; const [y,m,d]=iso.split("-").map(Number); const dt=new Date(y,m-1+Number(n),d-1); return dt.getFullYear()+"-"+String(dt.getMonth()+1).padStart(2,"0")+"-"+String(dt.getDate()).padStart(2,"0"); }
+const getP = id => S.persons.find(p=>p.id===id) || S.persons[0] || blankPerson();
+const promoters = () => S.persons.filter(p=>p.promoter);
+function who(p){ return (p.title||"Shri")+" "+V(p.name,"Name")+", "+(p.rel||"S/o")+" "+V(p.father,"Father's / spouse's name"); }
+function C(){ return CONS[S.cons]; }
+function entName(){
+  const n = V(S.entity.legal,"Legal name");
+  return (["prop","firm","huf"].includes(S.cons) ? "M/s " : "") + (S.cons==="prop" ? V(S.entity.trade||S.entity.legal,"Trade name") : n);
+}
+function upName(){ return has(S.entity.legal) ? S.entity.legal.toUpperCase() : M1+"Legal name"+M2; }
+const pan = () => V(S.entity.pan && S.entity.pan.toUpperCase(),"PAN");
+const stateN = () => V(S.entity.state,"State");
+const dateD = () => V(dmy(S.entity.date),"Date");
+const placeD = () => V(S.entity.place,"Place");
+function toLines(){ return ["To,","The Proper Officer,","Goods and Services Tax Department,", V(S.entity.jur,"Jurisdiction / Ward")]; }
+
+/* ---------------- document templates ---------------- */
+/* block kinds: title, p, right, center, lines, ol, table, sig, note, gap */
+function docChecklist(){
+  const c=C(), pt=PREM[S.prem.type], B=[];
+  B.push({k:"title",t:"CHECKLIST OF DOCUMENTS – GST REGISTRATION (FORM GST REG-01)"});
+  B.push({k:"lines",lines:["Name of applicant: "+entName(),"Constitution: "+c.label,"PAN: "+pan(),"Principal place of business: "+V(S.entity.ppob,"PPoB address"),"Prepared on: "+dateD()]});
+  const items=[];
+  items.push("PAN card of the "+(S.cons==="prop"?"proprietor":S.cons==="huf"?"HUF":"business entity"));
+  if(S.cons==="firm") items.push("Partnership deed (all pages)"+(has(S.entity.reg)?" and certificate of registration with Registrar of Firms":""));
+  if(S.cons==="llp") items.push("Certificate of incorporation (LLPIN auto-validated) and LLP agreement");
+  if(S.cons==="company") items.push("Certificate of incorporation (CIN auto-validated); MoA / AoA kept ready if queried");
+  if(S.cons==="trust") items.push("Registered trust deed; registration under s.12A/12AB, 80G if any");
+  if(S.cons==="society") items.push("Registration certificate under the Societies / Co-operative Societies Act and bye-laws");
+  if(S.cons==="govt") items.push("Proof of constitution / notification and appointment order of the officer in charge");
+  if(S.cons==="huf") items.push("Declaration of Karta / HUF deed listing coparceners");
+  const roleList = promoters().map(p=>V(p.name,"Name")).join(", ") || M1+"Names"+M2;
+  items.push("PAN, Aadhaar, mobile and e-mail of "+c.plural.toLowerCase()+" ("+roleList+")"+(c.din?"; DIN of each":""));
+  items.push("Recent colour passport-size photograph (front face, JPEG up to 100 KB) of "+(["prop","huf"].includes(S.cons)?"the "+c.role.toLowerCase():"each "+c.role.toLowerCase()+" (maximum 10)")+" — not cropped from PAN / Aadhaar");
+  const sig=getP(S.sigId);
+  items.push("Authorised signatory "+V(sig.name,"Signatory")+": PAN, Aadhaar, photograph, mobile and e-mail");
+  const ad=authDocs();
+  if(ad.includes("A")) items.push("Authorisation letter by the "+c.role.toLowerCase()+" — drafted");
+  if(ad.includes("B")) items.push("Authorisation letter signed by all "+c.plural.toLowerCase()+" — drafted");
+  if(ad.includes("C")) items.push("Certified copy of the resolution of the "+c.body+" — drafted");
+  if(ad.includes("D")) items.push("Authorisation letter on the entity's letterhead — drafted");
+  if(!ad.length) items.push("No authorisation letter needed: the "+c.role.toLowerCase()+" signs personally");
+  items.push("Bank proof in the applicant's name on its PAN (first page of passbook / statement / cancelled cheque) — at application or within 30 days of grant / before first GSTR-1, whichever is earlier (Rule 10A)");
+  items.push("List of principal goods / services with HSN / SAC codes");
+  pt.docs.forEach(d=>items.push("PPoB proof — "+d));
+  if(has(S.entity.apob)) items.push("Same set of premises documents for each additional place of business");
+  items.push("DSC of the authorised signatory"+(["company","llp"].includes(S.cons)?" (mandatory)":" or EVC through Aadhaar-linked mobile"));
+  B.push({k:"table",w:[10,76,14],head:["S. No.","Document","Received"],rows:items.map((t,i)=>[String(i+1),t,"[  ]"])});
+  B.push({k:"p",t:"**Points to note:** Opt for Aadhaar authentication (7 working days; otherwise 30 days with physical verification). Legal name must match PAN exactly. Officers cannot ask for Udyam certificate, residential proof in the same city, commercial electricity connection or photos of premises (para 5.4.1 of Circular 257/03/2026-GST). Reply to any REG-03 query in REG-04 within 7 working days."});
+  return B;
+}
+function authDocs(){
+  const a=C().auth;
+  if(a==="A"){ const sig=getP(S.sigId), own=promoters()[0]; return (own && sig.id===own.id) ? [] : ["A"]; }
+  if(a==="B") return ["B"];
+  if(a==="CD") return ["C","D"];
+  return ["D"];
+}
+function docA(){
+  const c=C(), own=promoters()[0]||getP(S.sigId), sig=getP(S.sigId);
+  const capacity = S.cons==="huf" ? "Karta of "+V(S.entity.legal,"HUF name")+" (HUF), PAN "+pan() : "sole proprietor of "+entName()+" (PAN "+V(S.entity.pan,"PAN")+")";
+  return [
+    {k:"title",t:"AUTHORISATION LETTER"},
+    {k:"right",t:"Date: "+dateD()},
+    {k:"lines",lines:toLines()},
+    {k:"p",t:"**Subject: Authorisation of Authorised Signatory for registration under GST – "+entName().replace(/\*/g,"")+"**"},
+    {k:"p",t:"Sir / Madam,"},
+    {k:"p",t:"I, "+who(own)+", "+capacity+", having principal place of business at "+V(S.entity.ppob,"PPoB address")+", hereby authorise "+who(sig)+", PAN "+V(sig.pan,"Signatory PAN")+", to act as the Primary Authorised Signatory for obtaining registration under the Central Goods and Services Tax Act, 2017 and the "+stateN()+" Goods and Services Tax Act, 2017."},
+    {k:"p",t:"The Authorised Signatory is empowered to sign and file the application for registration, returns, statements, replies to notices, applications for amendment, refund or cancellation, and all other documents on the GST portal, digitally or otherwise, and to appear before the GST authorities on my behalf. All acts done by the Authorised Signatory in this regard shall be binding on me."},
+    {k:"table",head:["Name of Authorised Signatory","Designation","Specimen Signature"],rows:[[V(sig.name,"Signatory"),V(sig.desig,"Designation"),""]]},
+    {k:"sig",align:"l",lines:["Place: "+placeD(),"Date: "+dateD()]},
+    {k:"sig",align:"r",lines:["(Signature)",V(own.name,"Name"),S.cons==="huf"?"Karta":"Proprietor"]},
+    {k:"p",t:"**Accepted**"},
+    {k:"sig",align:"l",lines:["(Signature)",V(sig.name,"Signatory"),"Authorised Signatory"]}
+  ];
+}
+function docB(){
+  const c=C(), sig=getP(S.sigId), ps=promoters(), llp=S.cons==="llp";
+  const constituted = llp
+    ? "a Limited Liability Partnership incorporated under the Limited Liability Partnership Act, 2008 on "+V(dmy(S.entity.regDate),"Date of incorporation")+" vide LLPIN "+V(S.entity.reg,"LLPIN")
+    : "a partnership firm constituted vide partnership deed dated "+V(dmy(S.entity.regDate),"Date of deed")+(has(S.entity.reg)?" and registered with the Registrar of Firms vide No. "+S.entity.reg:"");
+  const head = llp?["S. No.","Name of Designated Partner","PAN","DIN","Signature"]:["S. No.","Name of Partner","PAN","Signature"];
+  const rows = ps.map((p,i)=> llp?[String(i+1),V(p.name,"Name"),V(p.pan,"PAN"),V(p.din,"DIN"),""]:[String(i+1),V(p.name,"Name"),V(p.pan,"PAN"),""]);
+  return [
+    {k:"title",t:"AUTHORISATION LETTER"},
+    {k:"right",t:"Date: "+dateD()},
+    {k:"lines",lines:toLines()},
+    {k:"p",t:"**Subject: Authorisation of Authorised Signatory for GST registration of "+entName()+" (PAN "+pan()+")**"},
+    {k:"p",t:"Sir / Madam,"},
+    {k:"p",t:"We, the undersigned "+(llp?"designated partners":"partners")+" of "+entName()+", "+constituted+", having its principal place of business at "+V(S.entity.ppob,"PPoB address")+", hereby unanimously authorise "+who(sig)+", "+V(sig.desig,"Designation")+", PAN "+V(sig.pan,"Signatory PAN")+", to act as the Primary Authorised Signatory of the "+(llp?"LLP":"firm")+" for obtaining registration under the Central Goods and Services Tax Act, 2017 and the "+stateN()+" Goods and Services Tax Act, 2017."},
+    {k:"p",t:"The Authorised Signatory is empowered to sign and file the application for registration, returns, replies, refund and amendment applications and all other documents on the GST portal, digitally or otherwise, and to appear before the GST authorities on behalf of the "+(llp?"LLP":"firm")+". All acts done by the Authorised Signatory shall be binding on the "+(llp?"LLP":"firm")+"."},
+    {k:"table",head:["Name of Authorised Signatory","Designation","Specimen Signature"],rows:[[V(sig.name,"Signatory"),V(sig.desig,"Designation"),""]]},
+    {k:"table",head:head,rows:rows.length?rows:[["1",M1+"Add partners"+M2,"","",""].slice(0,head.length)]},
+    {k:"sig",align:"l",lines:["Place: "+placeD(),"Date: "+dateD()]}
+  ];
+}
+function docC(){
+  const c=C(), sig=getP(S.sigId), signer=getP(S.signerId);
+  const venue = has(S.meet.venue)?S.meet.venue:V(S.entity.ppob,"Venue");
+  const regTxt = has(S.entity.reg) ? " ("+c.reg+": "+S.entity.reg+")" : (S.cons==="company"?" (CIN: "+M1+"CIN"+M2+")":"");
+  const entityWord = S.cons==="company"?"Company":S.cons==="trust"?"Trust":"Society";
+  const B=[
+    {k:"title",t:"CERTIFIED TRUE COPY OF THE RESOLUTION PASSED AT THE MEETING OF THE "+c.body.toUpperCase()+" OF "+upName()+regTxt+" HELD ON "+V(dmy(S.meet.date),"Meeting date")+" AT "+V(S.meet.time,"Time")+" AT "+venue},
+    {k:"p",t:"**Registration under the Goods and Services Tax Acts**"},
+    {k:"p",t:"“RESOLVED THAT consent of the "+c.body+" be and is hereby accorded to apply for registration of the "+entityWord+" under the Central Goods and Services Tax Act, 2017 and the "+stateN()+" Goods and Services Tax Act, 2017 for its principal place of business situated at "+V(S.entity.ppob,"PPoB address")+(has(S.entity.apob)?" and additional place(s) of business at "+S.entity.apob:"")+"."},
+    {k:"p",t:"RESOLVED FURTHER THAT "+who(sig)+", "+V(sig.desig,"Designation")+", PAN "+V(sig.pan,"Signatory PAN")+", be and is hereby appointed as the Primary Authorised Signatory of the "+entityWord+" for the purposes of the GST laws, and is authorised to sign and submit the application for registration, returns, statements, replies to notices, applications for amendment, refund or cancellation and all other documents, digitally or otherwise, to appear before the GST authorities, and to do all such acts, deeds and things as may be necessary to give effect to this resolution."},
+    {k:"p",t:"RESOLVED FURTHER THAT "+(S.cons==="company"?"any Director of the Company":"the "+V(signer.desig,"Managing Trustee / President / Secretary"))+" be and is hereby authorised to issue a certified true copy of this resolution to the concerned authorities.”"},
+    {k:"p",t:"Specimen signature of the Authorised Signatory: ______________________"},
+    {k:"sig",align:"r",lines:["Certified true copy","For "+V(S.entity.legal,"Legal name"),"","(Signature)",V(signer.name,"Name"),V(signer.desig,c.role)+(S.cons==="company"?", DIN: "+V(signer.din,"DIN"):"")]},
+    {k:"sig",align:"l",lines:["Place: "+placeD(),"Date: "+dateD()]}
+  ];
+  return B;
+}
+function docD(){
+  const c=C(), sig=getP(S.sigId), signer=getP(S.signerId);
+  const basis = S.cons==="govt"
+    ? "In exercise of the powers vested in the undersigned as "+V(signer.desig,"Designation of head of office")+", "
+    : "Pursuant to the resolution of the "+c.body+" passed at its meeting held on "+V(dmy(S.meet.date),"Meeting date")+" (certified true copy enclosed), ";
+  return [
+    {k:"note",t:"[To be printed on the letterhead of "+(has(S.entity.legal)?S.entity.legal:"the entity")+"]"},
+    {k:"title",t:"AUTHORISATION LETTER"},
+    {k:"right",t:"Date: "+dateD()},
+    {k:"lines",lines:toLines()},
+    {k:"p",t:"**Subject: Authorisation of Authorised Signatory for GST registration – "+V(S.entity.legal,"Legal name")+", PAN "+pan()+"**"},
+    {k:"p",t:"Sir / Madam,"},
+    {k:"p",t:basis+who(sig)+", "+V(sig.desig,"Designation")+", PAN "+V(sig.pan,"Signatory PAN")+", is hereby authorised to act as the Primary Authorised Signatory of "+V(S.entity.legal,"Legal name")+" for obtaining registration under the Central Goods and Services Tax Act, 2017 and the "+stateN()+" Goods and Services Tax Act, 2017, and to sign, file and verify all applications, returns, replies and documents on the GST portal and to appear before the GST authorities."},
+    {k:"p",t:"His / her specimen signature is attested below."},
+    {k:"table",head:["Name of Authorised Signatory","Designation","Specimen Signature"],rows:[[V(sig.name,"Signatory"),V(sig.desig,"Designation"),""]]},
+    {k:"sig",align:"r",lines:["For "+V(S.entity.legal,"Legal name"),"","(Signature)",V(signer.name,"Name"),V(signer.desig,"Designation")+(S.cons==="company"?", DIN: "+V(signer.din,"DIN"):"")]},
+    {k:"sig",align:"l",lines:["Place: "+placeD(),"Encl.: "+(S.cons==="govt"?"Appointment / authority order":"Certified copy of resolution")]}
+  ];
+}
+function applicantLabel(){ return S.cons==="prop" ? V(promoters()[0]&&promoters()[0].name,"Proprietor")+", proprietor of "+entName() : entName(); }
+function docE(){
+  const os=S.prem.owners, many=os.length>1, I=many?"We":"I", my=many?"our":"my", am=many?"are":"am";
+  const ownerTxt = os.map(o=>(o.title||"Shri")+" "+V(o.name,"Owner name")+", "+(o.rel||"S/o")+" "+V(o.father,"Owner's father's name")+", residing at "+V(o.address,"Owner's address")).join("; and ");
+  const portion = S.prem.scope==="portion" || S.prem.type==="shared";
+  const B=[
+    {k:"right",t:"Date: "+dateD()},
+    {k:"center",t:"**TO WHOMSOEVER IT MAY CONCERN**"},
+    {k:"p",t:"**Subject: Consent for use of premises for GST Registration**"},
+    {k:"p",t:I+", "+ownerTxt+", being the lawful owner"+(many?"s":"")+" of the premises situated at "+V(S.entity.ppob,"Premises address")+" (“the said premises”), do hereby solemnly affirm and declare as under:"},
+    {k:"ol",items:[
+      "That "+I+" have permitted "+applicantLabel()+", who is "+my+" "+V(S.prem.relationship,"relationship")+", to use the said premises for obtaining registration under the Central Goods and Services Tax Act, 2017 and the rules made thereunder, and for carrying on business activities therefrom.",
+      "That "+I+" have permitted the applicant to use "+(portion?"the exclusively earmarked portion of the said premises described as "+V(S.prem.portion,"Portion allotted")+" (“the allocated premises”)":"the entire said premises")+".",
+      portion?"That the allocated premises is independent, clearly identifiable and exclusively assigned to the applicant, notwithstanding that the overall property may be shared.":"That the said premises is in the lawful possession of the applicant for the purpose of its business.",
+      "That "+I+" have no objection to the applicant using the said premises"+(portion?" / allocated premises":"")+" as its Principal Place of Business for GST registration and all related statutory compliances."
+    ]},
+    {k:"p",t:"This consent is granted voluntarily, with full knowledge, and without any coercion or undue influence."},
+    {k:"table",head:["Name of Owner","PAN","Contact No.","Signature"],rows:os.map(o=>[V(o.name,"Owner name"),V(o.pan&&o.pan.toUpperCase(),"PAN"),V(o.mobile,"Mobile"),""])},
+    {k:"sig",align:"l",lines:["Place: "+placeD()]},
+    {k:"note",t:"Enclose any one ownership document (property tax receipt / khata / electricity or water bill) in the name of the consenting owner"+(many?"s":"")+"."}
+  ];
+  return B;
+}
+function docF(){
+  const d=getP(S.deponentId), o=S.prem.owners[0]||blankOwner();
+  const cap = S.cons==="prop"?"proprietor":S.cons==="huf"?"Karta":(d.promoter?V(d.desig,C().role).toLowerCase():"authorised signatory");
+  return [
+    {k:"title",t:"UNDERTAKING"},
+    {k:"p",t:"I, "+who(d)+", aged about "+V(d.age,"Age")+" years, residing at "+V(d.address,"Residential address")+", do hereby solemnly affirm and declare as under:"},
+    {k:"ol",items:[
+      "That I am a citizen of India.",
+      "That I am the "+cap+" of "+entName()+".",
+      "That I am carrying on business from the premises situated at "+V(S.entity.ppob,"Business address")+" (“the said premises”).",
+      "That the said premises is owned by "+(o.title||"Shri")+" "+V(o.name,"Owner name")+".",
+      "That I do not have any formal written rent or lease agreement with the owner of the said premises.",
+      "That I am in lawful possession and occupation of the said premises since "+V(S.prem.since,"Month / Year")+", and conduct my business under the name and style of "+entName()+" from there.",
+      "That I am responsible for the payment of utility charges, including electricity, water and other charges, for the said premises.",
+      "That I am responsible for all statutory, legal and tax compliances under the CGST Act, 2017 and the rules made thereunder for the business carried on from the said premises.",
+      "That this undertaking is furnished for the purpose of obtaining GST registration.",
+      "That I am responsible for all legal and tax compliances at this address.",
+      "That the contents of this undertaking are true to the best of my knowledge and belief."
+    ]},
+    {k:"sig",align:"r",lines:["(Signature)",V(d.name,"Name")]},
+    {k:"sig",align:"l",lines:["Place: "+placeD(),"Date: "+dateD()]},
+    {k:"note",t:"Enclose any one document in the applicant's or owner's name for the premises, e.g. latest electricity bill."}
+  ];
+}
+function docG(){
+  const d=getP(S.deponentId);
+  const ver = has(S.entity.date)?longDate(S.entity.date):M1+"Date"+M2;
+  return [
+    {k:"note",t:"[On non-judicial stamp paper of minimum Rs. 100, attested by a First-Class Judicial / Executive Magistrate or Notary Public]"},
+    {k:"title",t:"AFFIDAVIT"},
+    {k:"p",t:"I, "+who(d)+", aged about "+V(d.age,"Age")+" years, residing at "+V(d.address,"Residential address")+", do hereby solemnly affirm and declare as under:"},
+    {k:"ol",items:[
+      "That I am an Indian by nationality.",
+      "That I am the legal heir / one of the legal heirs of Late "+V(S.prem.deceased,"Name of deceased")+" (“the deceased”), who passed away on "+V(dmy(S.prem.dod),"Date of death")+".",
+      "That the property located at "+V(S.entity.ppob,"Business address")+" (“the said premises”) was registered / stood in the name of the deceased.",
+      "That I have lawful possession of the said premises and am carrying on my business from there under the name and style of "+entName()+".",
+      "That I am responsible for paying the utility bills (electricity / water / property tax) for the said premises.",
+      "That I am solely responsible for all activities and tax liabilities arising from the business conducted at the said premises.",
+      "That this affidavit is submitted to the GST authorities for obtaining GST registration and the facts stated herein are true to the best of my knowledge and belief."
+    ]},
+    {k:"sig",align:"r",lines:["DEPONENT"]},
+    {k:"p",t:"**VERIFICATION**"},
+    {k:"p",t:"Verified at "+placeD()+" on this "+ver+" that the contents of the above affidavit are true and correct to the best of my knowledge and belief, and nothing has been concealed therein."},
+    {k:"sig",align:"r",lines:["DEPONENT"]},
+    {k:"note",t:"Enclose the death certificate and any one ownership document in the name of the deceased or the applicant."}
+  ];
+}
+function docH(){
+  const os=S.prem.owners, sig=getP(S.sigId), r=S.rent;
+  const lessor = os.map(o=>(o.title||"Shri")+" "+V(o.name,"Landlord name")+", "+(o.rel||"S/o")+" "+V(o.father,"Father's name")+", R/o "+V(o.address,"Address")+", PAN "+V(o.pan&&o.pan.toUpperCase(),"PAN")).join("; and ");
+  const lessee = S.cons==="prop" ? who(promoters()[0]||sig)+", proprietor of "+entName()+", PAN "+pan() : entName()+", PAN "+pan()+", through its authorised signatory "+who(sig);
+  const end = addMonths(r.start, r.months);
+  return [
+    {k:"note",t:"[On non-judicial stamp paper of the value prescribed under the "+stateN()+" Stamp Act]"},
+    {k:"title",t:"RENT AGREEMENT"},
+    {k:"p",t:"This Rent Agreement is made and executed at "+placeD()+" on "+dateD()+" BETWEEN "+lessor+" (hereinafter called the “Lessor”, which expression shall include heirs, successors and assigns) of the ONE PART; AND "+lessee+" (hereinafter called the “Lessee”) of the OTHER PART."},
+    {k:"p",t:"WHEREAS the Lessor is the absolute owner of "+V(r.desc,"Description of premises")+" situated at "+V(S.entity.ppob,"Premises address")+" (“the said premises”), and the Lessee has requested the Lessor to let out the said premises for commercial use, NOW THIS AGREEMENT WITNESSETH as under:"},
+    {k:"ol",items:[
+      "That the tenancy shall be for a period of "+V(r.months,"Term")+" months commencing from "+V(dmy(r.start),"Start date")+" and ending on "+V(dmy(end),"End date")+", renewable by mutual consent in writing.",
+      "That the Lessee shall pay a monthly rent of Rs. "+V(r.rent,"Rent")+"/- on or before the "+V(r.due,"Due day")+" day of each English calendar month.",
+      "That the Lessee has paid a sum of Rs. "+V(r.deposit,"Security deposit")+"/- as interest-free security deposit, refundable at the time of vacating the premises after adjusting dues, if any.",
+      "That charges for electricity, water and maintenance shall be borne by the Lessee as per actual consumption.",
+      "That the Lessor has no objection to the Lessee using the said premises as its Principal / Additional Place of Business for registration under the GST laws and any other statutory registration.",
+      "That the Lessee shall use the premises only for lawful business purposes and shall not sub-let or part with possession of the premises or any part thereof.",
+      "That the Lessee shall not make any structural changes without the written consent of the Lessor and shall keep the premises in good condition.",
+      "That either party may terminate this agreement by giving "+V(r.notice,"Notice")+" month(s) notice in writing to the other party.",
+      "That on expiry or termination, the Lessee shall hand over vacant and peaceful possession of the premises to the Lessor."
+    ]},
+    {k:"p",t:"IN WITNESS WHEREOF the parties have signed this agreement on the date first written above."},
+    {k:"table",head:["Lessor","Lessee"],rows:[["(Signature)\n"+os.map(o=>V(o.name,"Landlord name")).join(", "),"(Signature)\n"+(S.cons==="prop"?V((promoters()[0]||sig).name,"Proprietor"):"For "+entName()+"\n"+V(sig.name,"Signatory"))]]},
+    {k:"p",t:"**Witnesses:**"},
+    {k:"lines",lines:["1. ______________________________","","2. ______________________________"]},
+    {k:"note",t:"An agreement for more than 11 months must be registered. Upload with any one ownership document in the landlord's name."}
+  ];
+}
+const DOCS = {
+  K:{code:"✓",name:"Checklist",file:"00 Checklist",fn:docChecklist},
+  A:{code:"A",name:"Authorisation letter",file:"A Authorisation letter",fn:docA},
+  B:{code:"B",name:"Authorisation by partners",file:"B Authorisation by partners",fn:docB},
+  C:{code:"C",name:"Resolution",file:"C Resolution",fn:docC},
+  D:{code:"D",name:"Authorisation letter",file:"D Authorisation letter",fn:docD},
+  E:{code:"E",name:"Consent letter",file:"E Consent letter (Annexure-VI)",fn:docE},
+  F:{code:"F",name:"Undertaking",file:"F Undertaking (Annexure-V)",fn:docF},
+  G:{code:"G",name:"Affidavit",file:"G Affidavit (Annexure-IV)",fn:docG},
+  H:{code:"H",name:"Rent agreement",file:"H Rent agreement",fn:docH}
+};
+function requiredDocs(){
+  const L=["K"].concat(authDocs()), t=S.prem.type;
+  if(t==="consent"||t==="shared") L.push("E");
+  if(t==="rent_none") L.push("F");
+  if(t==="inherited") L.push("G");
+  if(t==="rent_unreg" && S.rent.make) L.push("H");
+  return L;
+}
+
+/* ---------------- rendering: text segments ---------------- */
+function segs(text){
+  const out=[]; const re=/\*\*([^*]+)\*\*|\u0001([^\u0002]*)\u0002/g; let last=0,m;
+  // bold may contain missing markers: handle by splitting bold content again
+  while((m=re.exec(text))){
+    if(m.index>last) out.push({t:text.slice(last,m.index)});
+    if(m[1]!==undefined){ m[1].split(/(\u0001[^\u0002]*\u0002)/).forEach(x=>{ if(!x) return; if(x[0]===M1) out.push({t:x.slice(1,-1),miss:true,b:true}); else out.push({t:x,b:true}); }); }
+    else out.push({t:m[2],miss:true});
+    last=re.lastIndex;
+  }
+  if(last<text.length) out.push({t:text.slice(last)});
+  return out;
+}
+// bold regex above can't span \u0001..\u0002 inside since [^*] allows them — fine.
+function html(text){ return segs(text).map(s=>{ const t=esc(s.t).replace(/\n/g,"<br>"); if(s.miss) return '<mark class="miss">'+t+'</mark>'; return s.b?"<b>"+t+"</b>":t; }).join(""); }
+function plain(text){ return segs(text).map(s=>s.miss?"["+s.t+"]":s.t).join(""); }
+function countMiss(blocks){ let n=0; const f=t=>{ n+=(String(t).match(/\u0001/g)||[]).length; };
+  blocks.forEach(b=>{ if(b.t) f(b.t); (b.lines||[]).forEach(f); (b.items||[]).forEach(f); (b.head||[]).forEach(f); (b.rows||[]).forEach(r=>r.forEach(f)); }); return n; }
+function toHTML(blocks){
+  return blocks.map(b=>{
+    switch(b.k){
+      case "title": return '<p class="title">'+html(b.t)+'</p>';
+      case "right": return '<p class="right">'+html(b.t)+'</p>';
+      case "center": return '<p class="center">'+html(b.t)+'</p>';
+      case "note": return '<p class="note">'+html(b.t)+'</p>';
+      case "lines": return '<div class="lines">'+b.lines.map(l=>'<p>'+(l?html(l):"&nbsp;")+'</p>').join("")+'</div>';
+      case "ol": return '<ol>'+b.items.map(i=>'<li>'+html(i)+'</li>').join("")+'</ol>';
+      case "table": return '<table><thead><tr>'+b.head.map((h,i)=>'<th'+(b.w?' style="width:'+b.w[i]+'%"':'')+'>'+html(h)+'</th>').join("")+'</tr></thead><tbody>'+b.rows.map(r=>'<tr>'+r.map(c=>'<td>'+(c?html(c):"&nbsp;")+'</td>').join("")+'</tr>').join("")+'</tbody></table>';
+      case "sig": return '<div class="sig'+(b.align==="r"?" r":"")+'">'+b.lines.map(l=>'<p>'+(l?html(l):"&nbsp;")+'</p>').join("")+'</div>';
+      default: return '<p>'+html(b.t||"")+'</p>';
+    }
+  }).join("");
+}
+function toText(blocks){
+  const o=[];
+  blocks.forEach(b=>{
+    switch(b.k){
+      case "lines": case "sig": o.push(b.lines.map(plain).join("\n")); break;
+      case "ol": o.push(b.items.map((i,n)=>(n+1)+". "+plain(i)).join("\n")); break;
+      case "table": o.push([b.head].concat(b.rows).map(r=>r.map(c=>plain(c).replace(/\n/g," ")).join(" | ")).join("\n")); break;
+      default: o.push(plain(b.t||""));
+    }
+  });
+  return o.join("\n\n");
+}
+
+/* ---------------- DOCX writer ---------------- */
+const X = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+function runs(text,base){
+  base=base||{};
+  return segs(text).map(s=>{
+    const b=s.b||base.b, parts=String(s.miss?"["+s.t+"]":s.t).split("\n");
+    let rp=(b?"<w:b/>":"")+(base.i?"<w:i/>":"")+(base.u?'<w:u w:val="single"/>':"")+(s.miss?'<w:highlight w:val="yellow"/>':"");
+    rp = rp?"<w:rPr>"+rp+"</w:rPr>":"";
+    return parts.map((p,i)=>"<w:r>"+rp+(i?"<w:br/>":"")+'<w:t xml:space="preserve">'+X(p)+"</w:t></w:r>").join("");
+  }).join("");
+}
+function para(text,o){
+  o=o||{};
+  let pp="";
+  if(o.pb) pp+="<w:pageBreakBefore/>";
+  if(o.keep) pp+="<w:keepNext/>";
+  pp+='<w:spacing w:after="'+(o.after!==undefined?o.after:160)+'"/>';
+  if(o.ind) pp+='<w:ind w:left="'+o.ind+'" w:hanging="'+(o.hang||0)+'"/>';
+  pp+='<w:jc w:val="'+(o.jc||"both")+'"/>';
+  return "<w:p><w:pPr>"+pp+"</w:pPr>"+runs(text,o)+"</w:p>";
+}
+function table(head,rows,pct){
+  const n=head.length, W=i=>pct?Math.floor(9026*pct[i]/100):Math.floor(9026/n);
+  const bd='<w:tblBorders>'+["top","left","bottom","right","insideH","insideV"].map(s=>'<w:'+s+' w:val="single" w:sz="4" w:space="0" w:color="555555"/>').join("")+'</w:tblBorders>';
+  const cell=(t,h,i)=>'<w:tc><w:tcPr><w:tcW w:w="'+W(i)+'" w:type="dxa"/>'+(h?'<w:shd w:val="clear" w:color="auto" w:fill="EEEADF"/>':'')+'</w:tcPr>'+para(t||"",{after:40,jc:"left",b:h})+'</w:tc>';
+  return '<w:tbl><w:tblPr><w:tblW w:w="9026" w:type="dxa"/>'+bd+'<w:tblCellMar><w:left w:w="90" w:type="dxa"/><w:right w:w="90" w:type="dxa"/></w:tblCellMar></w:tblPr><w:tblGrid>'+head.map((_,i)=>'<w:gridCol w:w="'+W(i)+'"/>').join("")+'</w:tblGrid>'
+    +'<w:tr><w:trPr><w:tblHeader/></w:trPr>'+head.map((h,i)=>cell(h,true,i)).join("")+'</w:tr>'
+    +rows.map(r=>'<w:tr><w:trPr><w:trHeight w:val="'+(r.every(c=>!c)?"600":"0")+'"/></w:trPr>'+r.map((c,i)=>cell(c,false,i)).join("")+'</w:tr>').join("")
+    +'</w:tbl>'+para("",{after:120});
+}
+function blocksXML(blocks,pageBreak){
+  let first=true;
+  const pb=()=>{ const v=pageBreak&&first; first=false; return v; };
+  return blocks.map(b=>{
+    switch(b.k){
+      case "title": return para(b.t,{jc:"center",b:true,u:true,after:280,pb:pb()});
+      case "right": return para(b.t,{jc:"right",pb:pb()});
+      case "center": return para(b.t,{jc:"center",pb:pb()});
+      case "note": return para(b.t,{jc:"left",i:true,pb:pb()});
+      case "lines": { const s=pb(); return b.lines.map((l,i)=>para(l,{jc:"left",after:i===b.lines.length-1?200:0,pb:s&&i===0})).join(""); }
+      case "ol": { const s=pb(); return b.items.map((t,i)=>para((i+1)+".\t"+t,{ind:567,hang:567,pb:s&&i===0,after:120})).join(""); }
+      case "table": pb(); return table(b.head,b.rows,b.w);
+      case "sig": { const s=pb(); return para("",{after:0,pb:s}) + b.lines.map((l,i)=>para(l,{jc:b.align==="r"?"right":"left",after:i===b.lines.length-1?240:0,keep:i<b.lines.length-1})).join(""); }
+      default: return para(b.t||"",{pb:pb()});
+    }
+  }).join("");
+}
+function docxBlob(docList){
+  const body = docList.map((d,i)=>blocksXML(d.blocks,i>0)).join("");
+  const document='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>'+body+'<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1440" w:right="1440" w:bottom="1440" w:left="1440" w:header="708" w:footer="708" w:gutter="0"/></w:sectPr></w:body></w:document>';
+  const styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:hAnsi="Times New Roman" w:cs="Times New Roman" w:eastAsia="Times New Roman"/><w:sz w:val="24"/><w:szCs w:val="24"/><w:lang w:val="en-IN"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="160" w:line="300" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults><w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style></w:styles>';
+  const zip=new JSZip();
+  zip.file("[Content_Types].xml",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/><Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/></Types>');
+  zip.file("_rels/.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/></Relationships>');
+  zip.file("word/_rels/document.xml.rels",'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>');
+  zip.file("word/document.xml",document);
+  zip.file("word/styles.xml",styles);
+  return zip.generateAsync({type:"blob",mimeType:"application/vnd.openxmlformats-officedocument.wordprocessingml.document"});
+}
+
+/* ---------------- downloads ---------------- */
+let dl=null, dlTried=false;
+async function getDl(){ if(!dlTried){ dlTried=true; try{ dl = window.claude && window.claude.use ? await window.claude.use("downloads") : null; }catch(e){ dl=null; } } if(!dl){ dl={save:async function(o){ const blob=o.data instanceof Blob?o.data:new Blob([o.data],{type:"application/json"}); const u=URL.createObjectURL(blob); const a=document.createElement("a"); a.href=u; a.download=o.filename; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(u),4000); }}; } return dl; }
+function status(msg,cls){ const el=$("#status"); el.textContent=msg; el.className="status"+(cls?" "+cls:""); }
+async function save(filename,data){
+  const d=await getDl();
+  if(!d){ status("Saving files isn't available in this view. Use Copy text, or open the page in claude.ai.","err"); return; }
+  try{ await d.save({filename,data}); status("Saved "+filename,"ok"); }
+  catch(e){ const c=e&&e.code; status(c==="declined"?"Save cancelled.":c==="rate_limited"?"A save prompt is already open.":"Couldn't save: "+((e&&e.message)||c||"unknown error"),c==="declined"?"":"err"); }
+}
+const baseName = () => (has(S.entity.trade)?S.entity.trade:has(S.entity.legal)?S.entity.legal:"Client").replace(/[\\/:*?"<>|]+/g,"").trim();
+
+/* ---------------- form rendering ---------------- */
+function get(path){ return path.split(".").reduce((o,k)=>o==null?o:o[k],S); }
+function set(path,val){ const ks=path.split("."); let o=S; for(let i=0;i<ks.length-1;i++) o=o[ks[i]]; o[ks[ks.length-1]]=val; }
+
+function renderCons(){
+  $("#consList").innerHTML = Object.entries(CONS).map(([k,c])=>'<label><input type="radio" name="cons" id="cons_'+k+'" value="'+k+'"'+(S.cons===k?" checked":"")+'>'+esc(c.label)+'</label>').join("");
+}
+function personHTML(p,i){
+  const c=C(), pre="persons."+i+".";
+  const sel=(k,opts)=>'<select id="p'+i+'_'+k+'" data-k="'+pre+k+'">'+opts.map(o=>'<option'+(p[k]===o?" selected":"")+'>'+o+'</option>').join("")+'</select>';
+  const inp=(k,label,extra)=>'<label class="f">'+label+'<input id="p'+i+'_'+k+'" data-k="'+pre+k+'" value="'+esc(p[k]||"")+'"'+(extra||"")+'></label>';
+  return '<div class="person" data-pid="'+p.id+'">'
+    +'<div class="ph"><span>'+(p.promoter?esc(c.role):"Signatory (not a promoter)")+' '+(i+1)+'</span>'
+    +(S.persons.length>1?'<button type="button" class="small ghost danger" data-del-person="'+i+'">Remove</button>':'')+'</div>'
+    +'<div class="row three"><label class="f">Title'+sel("title",["Shri","Smt.","Ms.","Dr."])+'</label>'+inp("name","Full name")+inp("pan","PAN",' class="mono" maxlength="10"')+'</div>'
+    +'<div class="row three"><label class="f">Relation'+sel("rel",["S/o","D/o","W/o"])+'</label>'+inp("father","Father's / spouse's name")+inp("desig","Designation")+'</div>'
+    +'<div class="row">'+inp("age","Age",' inputmode="numeric"')+(c.din?inp("din","DIN",' class="mono"'):inp("mobile","Mobile"))+'</div>'
+    +'<label class="f">Residential address<input id="p'+i+'_address" data-k="'+pre+'address" value="'+esc(p.address||"")+'"></label>'
+    +'<label class="chk"><input type="checkbox" id="p'+i+'_promoter" data-k="'+pre+'promoter"'+(p.promoter?" checked":"")+'>Promoter / '+esc(c.role.toLowerCase())+' (shown in partner / director lists)</label>'
+    +'</div>';
+}
+function renderPersons(){
+  const c=C();
+  $("#personsTitle").textContent = c.plural + " & signatory";
+  $("#personsHint").textContent = S.persons.length+" added";
+  $("#personsList").innerHTML = S.persons.map(personHTML).join("");
+  $("#btnAddPerson").textContent = ["prop","huf"].includes(S.cons) ? "+ Add a separate signatory" : "+ Add "+c.role.toLowerCase()+" / signatory";
+  renderPersonSelects();
+}
+function renderPersonSelects(){
+  document.querySelectorAll("select[data-person]").forEach(sel=>{
+    const k=sel.dataset.k, cur=get(k);
+    sel.innerHTML = S.persons.map(p=>'<option value="'+p.id+'"'+(p.id===cur?" selected":"")+'>'+esc(p.name||"(unnamed)")+(p.desig?" — "+esc(p.desig):"")+'</option>').join("");
+    if(!S.persons.some(p=>p.id===cur) && S.persons[0]){ set(k,S.persons[0].id); sel.value=S.persons[0].id; }
+  });
+}
+function ownerHTML(o,i){
+  const pre="prem.owners."+i+".";
+  const inp=(k,label,extra)=>'<label class="f">'+label+'<input id="o'+i+'_'+k+'" data-k="'+pre+k+'" value="'+esc(o[k]||"")+'"'+(extra||"")+'></label>';
+  const sel=(k,opts)=>'<select id="o'+i+'_'+k+'" data-k="'+pre+k+'">'+opts.map(x=>'<option'+(o[k]===x?" selected":"")+'>'+x+'</option>').join("")+'</select>';
+  const t = S.prem.type.startsWith("rent")?"Landlord":"Owner";
+  return '<div class="person"><div class="ph"><span>'+t+' '+(i+1)+'</span>'+(S.prem.owners.length>1?'<button type="button" class="small ghost danger" data-del-owner="'+i+'">Remove</button>':'')+'</div>'
+    +'<div class="row three"><label class="f">Title'+sel("title",["Shri","Smt.","Ms.","Dr."])+'</label>'+inp("name","Full name")+inp("pan","PAN",' class="mono" maxlength="10"')+'</div>'
+    +'<div class="row three"><label class="f">Relation'+sel("rel",["S/o","D/o","W/o"])+'</label>'+inp("father","Father's / spouse's name")+inp("mobile","Mobile")+'</div>'
+    +inp("address","Address")+'</div>';
+}
+function renderOwners(){ $("#ownersList").innerHTML = S.prem.owners.map(ownerHTML).join(""); }
+function renderPremSelect(){ $("#p_type").innerHTML = Object.entries(PREM).map(([k,p])=>'<option value="'+k+'"'+(S.prem.type===k?" selected":"")+'>'+esc(p.label)+'</option>').join(""); }
+function fillScalars(){
+  document.querySelectorAll("#form [data-k]").forEach(el=>{
+    if(el.closest(".person")||el.dataset.person!==undefined||el.id==="p_type") return;
+    const v=get(el.dataset.k);
+    if(el.type==="checkbox") el.checked=!!v; else el.value = v==null?"":v;
+  });
+}
+function applyVisibility(){
+  const c=C(), t=S.prem.type, pt=PREM[t];
+  const reg=!!c.reg; $("#regRow").hidden=!reg;
+  if(reg){ $("#regLabel").textContent=c.reg; $("#regDateLabel").textContent=c.regDate; }
+  $("#meetSec").hidden = !c.body; if(c.body) $("#meetTitle").textContent=c.meetName;
+  $("#signerWrap").hidden = !(c.auth==="CD"||c.auth==="D");
+  $("#signerLabel").textContent = S.cons==="govt"?"Letter issued by (head of office)":S.cons==="company"?"Resolution certified / letter signed by (director)":"Resolution certified / letter signed by";
+  const ad=authDocs();
+  $("#sigNote").textContent = c.auth==="A" ? (ad.length?"Draft A will be prepared because someone other than the "+c.role.toLowerCase()+" signs.":"The "+c.role.toLowerCase()+" signs personally, so no authorisation letter is needed.") : c.auth==="B" ? "Draft B is signed by all "+c.plural.toLowerCase()+"." : c.auth==="CD" ? "Drafts C (resolution) and D (authorisation letter) will be prepared." : "Draft D will be issued by the head of office.";
+  $("#ownersWrap").hidden = !pt.owners;
+  $("#consentWrap").hidden = !(t==="consent"||t==="shared");
+  $("#portionWrap").hidden = !(S.prem.scope==="portion"||t==="shared");
+  $("#possWrap").hidden = t!=="rent_none";
+  $("#inheritWrap").hidden = t!=="inherited";
+  $("#deponentWrap").hidden = !(t==="rent_none"||t==="inherited");
+  $("#deponentLabel").firstChild.textContent = t==="inherited"?"Deponent (legal heir)":"Person giving the undertaking";
+  $("#rentSec").hidden = t!=="rent_unreg";
+  $("#premNote").textContent = "Upload: "+pt.docs.join("; ")+".";
+  $("#exampleBanner").hidden = !S.example;
+}
+
+/* ---------------- preview ---------------- */
+let current="K";
+function renderPreview(){
+  const list=requiredDocs();
+  if(!list.includes(current)) current=list[0];
+  const built = list.map(k=>({k, blocks:DOCS[k].fn()}));
+  $("#docCount").textContent = (list.length-1)+" draft"+(list.length-1===1?"":"s")+" + checklist";
+  $("#tabs").innerHTML = built.map(d=>{ const m=countMiss(d.blocks); return '<button type="button" role="tab" class="tab" id="tab_'+d.k+'" data-doc="'+d.k+'" aria-selected="'+(d.k===current)+'"><span class="code">'+DOCS[d.k].code+'</span>'+esc(DOCS[d.k].name)+(m?'<span class="miss-count">'+m+'</span>':'')+'</button>'; }).join("");
+  const cur=built.find(d=>d.k===current);
+  $("#paper").innerHTML = toHTML(cur.blocks);
+  return built;
+}
+let tmr=null;
+function refresh(){ clearTimeout(tmr); tmr=setTimeout(()=>{ applyVisibility(); renderPreview(); persist(); },80); }
+
+/* ---------------- events ---------------- */
+const form=$("#form");
+form.addEventListener("submit",e=>e.preventDefault());
+form.addEventListener("input",e=>{
+  const el=e.target;
+  if(el.name==="cons") return;
+  const k=el.dataset.k; if(!k) return;
+  let v = el.type==="checkbox"?el.checked:el.value;
+  if(el.classList.contains("mono")) v=v.toUpperCase();
+  set(k,v);
+  if(S.example){ S.example=false; }
+  if(/^persons\.\d+\.(name|desig)$/.test(k)) renderPersonSelects();
+  if(/^persons\.\d+\.promoter$/.test(k)) renderPersons();
+  if(k==="prem.type"){ renderOwners(); }
+  refresh();
+});
+form.addEventListener("change",e=>{
+  const el=e.target;
+  if(el.name==="cons"){ S.cons=el.value; S.example=false; renderPersons(); refresh(); }
+  if(el.dataset.person!==undefined){ set(el.dataset.k, el.value); refresh(); }
+  if(el.id==="p_type"){ S.prem.type=el.value; renderOwners(); refresh(); }
+});
+form.addEventListener("click",e=>{
+  const dp=e.target.closest("[data-del-person]"), dO=e.target.closest("[data-del-owner]");
+  if(dp){ S.persons.splice(+dp.dataset.delPerson,1); renderPersons(); refresh(); }
+  if(dO){ S.prem.owners.splice(+dO.dataset.delOwner,1); renderOwners(); refresh(); }
+});
+$("#btnAddPerson").addEventListener("click",()=>{ const solo=["prop","huf"].includes(S.cons); S.persons.push(blankPerson(!solo)); renderPersons(); refresh(); });
+$("#btnAddOwner").addEventListener("click",()=>{ S.prem.owners.push(blankOwner()); renderOwners(); refresh(); });
+$("#tabs").addEventListener("click",e=>{ const t=e.target.closest("[data-doc]"); if(!t) return; current=t.dataset.doc; renderPreview(); });
+
+$("#btnCopy").addEventListener("click",()=>{
+  const txt=toText(DOCS[current].fn());
+  const fallback=()=>{ const r=document.createRange(); r.selectNodeContents($("#paper")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); status("Text selected — press Ctrl+C to copy.",""); };
+  try{ navigator.clipboard.writeText(txt).then(()=>status("Copied "+DOCS[current].name+".","ok"),fallback); }catch(err){ fallback(); }
+});
+$("#btnDocx").addEventListener("click",async()=>{
+  const blob=await docxBlob([{blocks:DOCS[current].fn()}]);
+  save(DOCS[current].file+" - "+baseName()+".docx",blob);
+});
+$("#btnAll").addEventListener("click",async()=>{
+  const list=requiredDocs();
+  const blob=await docxBlob(list.map(k=>({blocks:DOCS[k].fn()})));
+  save("GST registration documents - "+baseName()+".docx",blob);
+});
+$("#btnZip").addEventListener("click",async()=>{
+  const z=new JSZip();
+  for(const k of requiredDocs()){ z.file(DOCS[k].file+" - "+baseName()+".docx", await docxBlob([{blocks:DOCS[k].fn()}])); }
+  save("GST registration - "+baseName()+".zip", await z.generateAsync({type:"blob"}));
+});
+$("#btnSaveData").addEventListener("click",()=>save("GST client data - "+baseName()+".json", JSON.stringify(Object.assign({}, S, {example:false}),null,2)));
+$("#fileLoad").addEventListener("change",e=>{
+  const f=e.target.files[0]; if(!f) return;
+  const rd=new FileReader();
+  rd.onload=()=>{ try{ const d=JSON.parse(rd.result); if(!d.entity||!d.persons) throw new Error("not a client file"); S=Object.assign(blankState(),d,{example:false}); renderAll(); status("Loaded "+f.name,"ok"); }catch(err){ status("That file isn't a client data file saved from this tool.","err"); } e.target.value=""; };
+  rd.readAsText(f);
+});
+let newArmed=false;
+$("#btnNew").addEventListener("click",()=>{
+  if(!newArmed && !S.example){ newArmed=true; $("#btnNew").textContent="Click again to clear"; setTimeout(()=>{ newArmed=false; $("#btnNew").textContent="New client"; },3000); return; }
+  newArmed=false; $("#btnNew").textContent="New client"; S=blankState(); renderAll(); status("Form cleared.","");
+});
+$("#btnClearExample").addEventListener("click",()=>{ S=blankState(); renderAll(); });
+
+function renderAll(){ renderCons(); renderPremSelect(); renderPersons(); renderOwners(); fillScalars(); applyVisibility(); renderPreview(); persist(); }
+renderAll();
+/* Browsers can restore a page (and typed values) from their back/forward cache: always start again. */
+window.addEventListener("pageshow",function(e){ if(e.persisted){ S=Object.assign(blankState(),exampleState()); renderAll(); } });
+})();
+</script>
+
+</body></html>

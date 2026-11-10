@@ -1,0 +1,426 @@
+{
+ "order": [
+  "income-tax",
+  "gst",
+  "mca-roc",
+  "finance",
+  "labour-law",
+  "others"
+ ],
+ "pages": {
+  "income-tax": {
+   "title": "Income Tax",
+   "icon": "💰",
+   "intro": "The Income-tax Act, 2025 and Income-tax Rules, 2026 apply from 1 April 2026 (Tax Year 2026-27 onwards). Income of FY 2025-26 and earlier years continues under the Income-tax Act, 1961 and Rules, 1962.",
+   "acts": [
+    [
+     "Income-tax Act, 2025",
+     "In force from 1 April 2026 – full text, FAQs and transition notes",
+     "https://www.incometaxindia.gov.in/en/income-tax-act-202511"
+    ],
+    [
+     "Income-tax Rules, 2026",
+     "Notification No. 22/2026, G.S.R. 198(E) dated 20-03-2026",
+     "https://www.incometaxindia.gov.in/w/notification-no.-22/2026-f.-no.-370142/41/2025-tpl-/-g.s.r.-198-e-"
+    ],
+    [
+     "Income-tax Act, 1961 & Rules, 1962",
+     "For FY 2025-26 and earlier years – under Tax Laws & Rules",
+     "https://www.incometaxindia.gov.in/"
+    ],
+    [
+     "Section mapping: 1961 Act ↔ 2025 Act",
+     "Official utility to find the new section for an old one",
+     "https://www.incometaxindia.gov.in/en/income-tax-act-202511"
+    ]
+   ],
+   "forms": [
+    [
+     "Income-tax Forms, 2026",
+     "All forms notified under the Income-tax Rules, 2026",
+     "https://www.incometaxindia.gov.in/income-tax-forms-2026"
+    ],
+    [
+     "Form mapping: Rules 1962 ↔ Rules 2026",
+     "Find the new form number for an old form (e.g. 3CD, 26Q, 15CA)",
+     "https://incometaxindia.gov.in/utility-to-check-forms-under-income-tax-rule-1962-vis-a-vis-income-tax-rules-2026"
+    ],
+    [
+     "ITR utilities & e-Filing",
+     "Returns, statutory forms, offline utilities – Income Tax e-Filing portal",
+     "https://www.incometax.gov.in/iec/foportal/"
+    ],
+    [
+     "TDS / TCS – TRACES",
+     "Form 16 / 16A downloads, justification reports, corrections",
+     "https://www.tdscpc.gov.in/"
+    ]
+   ],
+   "calc_widgets": [],
+   "calcs": [
+    [
+     "Income & Tax Calculator (official)",
+     "Old vs new regime; choose Income-tax Act 2025 or 1961",
+     "https://www.incometax.gov.in/iec/foportal/income-tax-calculator"
+    ],
+    [
+     "Income & Tax Estimator (official)",
+     "Pre-filled estimate after login on the e-Filing portal",
+     "https://www.incometax.gov.in/iec/foportal/income-tax-estimator"
+    ]
+   ],
+   "others": [
+    [
+     "Income Tax e-Filing portal",
+     "Login, e-Pay tax, e-Verify, PAN–Aadhaar link, refund status",
+     "https://www.incometax.gov.in/iec/foportal/"
+    ],
+    [
+     "Income Tax Department",
+     "Circulars, notifications, FAQs and tax tutorials",
+     "https://www.incometaxindia.gov.in/"
+    ],
+    [
+     "Need help with ITR, notices or appeals?",
+     "Talk to our direct tax team",
+     "/contact/"
+    ]
+   ]
+  },
+  "gst": {
+   "title": "GST",
+   "icon": "🧾",
+   "intro": "Central, Integrated and Union Territory GST Acts and Rules, the Haryana GST Act, forms and filing portals.",
+   "acts": [
+    [
+     "CGST Act, 2017 & amendments",
+     "GST Council – Central GST Acts, amendment Acts, Finance Acts",
+     "https://gstcouncil.gov.in/central-gst"
+    ],
+    [
+     "CGST Rules, 2017",
+     "GST Council – Rules (Part A) and Forms (Part B)",
+     "https://gstcouncil.gov.in/CGST-Rules"
+    ],
+    [
+     "IGST, UTGST & Compensation Cess Acts",
+     "GST Council – all GST legislation index",
+     "https://gstcouncil.gov.in/sitemap"
+    ],
+    [
+     "CBIC Tax Information portal",
+     "Section-wise Acts, Rules, Forms, Notifications & Circulars",
+     "https://taxinformation.cbic.gov.in/"
+    ],
+    [
+     "Haryana GST Act & Rules",
+     "Excise & Taxation Department, Haryana",
+     "https://www.haryanatax.gov.in/"
+    ]
+   ],
+   "forms": [
+    [
+     "GST Forms (CBIC)",
+     "All forms under the CGST Rules – registration, returns, refund, appeals",
+     "https://taxinformation.cbic.gov.in/"
+    ],
+    [
+     "GST Portal – Downloads",
+     "Offline tools & return utilities on the GST common portal",
+     "https://www.gst.gov.in/"
+    ],
+    [
+     "e-Way Bill portal",
+     "Generate, extend or cancel e-way bills",
+     "https://ewaybillgst.gov.in/"
+    ],
+    [
+     "e-Invoice (IRP)",
+     "IRN generation and e-invoice verification",
+     "https://einvoice1.gst.gov.in/"
+    ]
+   ],
+   "calc_widgets": [
+    "gst",
+    "gstinterest"
+   ],
+   "calcs": [
+    [
+     "GST rates of goods & services (CBIC)",
+     "Official rate schedules and rate finder",
+     "https://cbic-gst.gov.in/gst-goods-services-rates.html"
+    ]
+   ],
+   "others": [
+    [
+     "GST Registration Drafter",
+     "Free tool: picks the documents needed for GST registration and drafts them, ready for Word",
+     "/gst-registration-drafter/"
+    ],
+    [
+     "GST Council",
+     "Council meetings, recommendations and press releases",
+     "https://gstcouncil.gov.in/"
+    ],
+    [
+     "CBIC – GST",
+     "Notifications, circulars, instructions and FAQs",
+     "https://cbic-gst.gov.in/"
+    ],
+    [
+     "Search taxpayer / HSN–SAC",
+     "Verify a GSTIN or look up HSN/SAC on the GST portal",
+     "https://www.gst.gov.in/"
+    ],
+    [
+     "Need help with GST returns, notices or audit?",
+     "Talk to our indirect tax team",
+     "/contact/"
+    ]
+   ]
+  },
+  "mca-roc": {
+   "title": "MCA & ROC",
+   "icon": "🏢",
+   "intro": "Companies Act, 2013, LLP Act, 2008 and the rules under them. All company and LLP e-forms are now filed as web forms on the MCA21 V3 portal.",
+   "acts": [
+    [
+     "Acts & Rules – MCA",
+     "Companies Act 2013, LLP Act 2008, Competition Act and other Acts with Rules",
+     "https://www.mca.gov.in/content/mca/global/en/acts-rules.html"
+    ],
+    [
+     "MCA E-Book – Notifications",
+     "Consolidated Acts, Rules, Regulations and notifications",
+     "https://www.mca.gov.in/content/mca/global/en/acts-rules/ebooks/notifications.html"
+    ]
+   ],
+   "forms": [
+    [
+     "MCA21 V3 portal",
+     "Company & LLP e-forms (SPICe+, AOC-4, MGT-7, DIR-3 KYC, LLP Form 8/11 etc.)",
+     "https://www.mca.gov.in/content/mca/global/en/home.html"
+    ],
+    [
+     "Business user login – file e-forms",
+     "Login to fill and submit web forms",
+     "https://www.mca.gov.in/content/mca/global/en/foportal/fologin.html"
+    ],
+    [
+     "SPICe+ & linked filings FAQs",
+     "MCA guidance on incorporation filings (PDF)",
+     "https://www.mca.gov.in/content/dam/mca/pdf/SPICEplus-and-linked-filings-FAQs-V3-20230122.pdf"
+    ]
+   ],
+   "calc_widgets": [
+    "agm"
+   ],
+   "calcs": [],
+   "others": [
+    [
+     "Company / LLP master data",
+     "Check company status, directors and charges on the MCA portal",
+     "https://www.mca.gov.in/content/mca/global/en/home.html"
+    ],
+    [
+     "NCLT",
+     "National Company Law Tribunal – cause lists and orders",
+     "https://nclt.gov.in/"
+    ],
+    [
+     "Need help with incorporation or ROC compliance?",
+     "Talk to our corporate law team",
+     "/contact/"
+    ]
+   ]
+  },
+  "labour-law": {
+   "title": "Labour Law",
+   "icon": "👷",
+   "intro": "The four Labour Codes are in force from 21 November 2025, replacing 29 central labour laws. Central Rules under all four Codes were notified on 8 May 2026; state rules are being notified state-wise.",
+   "acts": [
+    [
+     "Labour Codes – Ministry of Labour",
+     "Code on Wages, IR Code, Social Security Code, OSH Code & Central Rules",
+     "https://www.labour.gov.in/offerings/schemes-and-services/details/labour-codes-gzNzQzMtQWa"
+    ],
+    [
+     "Text of the four Labour Codes (PDF)",
+     "Ministry of Labour & Employment compilation",
+     "https://labour.gov.in/sites/default/files/labour_code_eng.pdf"
+    ],
+    [
+     "Code on Social Security, 2020",
+     "India Code – official text (PF, ESI, gratuity, maternity, gig workers)",
+     "https://www.indiacode.nic.in/handle/123456789/16823"
+    ],
+    [
+     "What's new – Ministry of Labour",
+     "Latest notifications, Central Rules 2026 and FAQs on the Codes",
+     "https://labour.gov.in/en/whats-new"
+    ]
+   ],
+   "forms": [
+    [
+     "EPFO",
+     "PF registration, ECR/challan, UAN, claims",
+     "https://www.epfindia.gov.in/"
+    ],
+    [
+     "ESIC",
+     "ESI registration, monthly contributions, IP services",
+     "https://www.esic.gov.in/"
+    ],
+    [
+     "Shram Suvidha portal",
+     "Unified registration, licences and returns under central labour laws",
+     "https://shramsuvidha.gov.in/"
+    ]
+   ],
+   "calc_widgets": [
+    "gratuity",
+    "pfesi"
+   ],
+   "calcs": [],
+   "others": [
+    [
+     "e-Shram",
+     "Registration of unorganised, gig and platform workers",
+     "https://eshram.gov.in/"
+    ],
+    [
+     "Need help with PF, ESI or Labour Code compliance?",
+     "Talk to our team",
+     "/contact/"
+    ]
+   ]
+  },
+  "others": {
+   "title": "Others",
+   "icon": "📂",
+   "intro": "Labour codes, MSME, intellectual property, state taxes and other laws we advise on.",
+   "acts": [
+    [
+     "India Code",
+     "Official repository of all Central and State Acts",
+     "https://www.indiacode.nic.in/"
+    ],
+    [
+     "Labour Codes – Ministry of Labour",
+     "Code on Wages, IR Code, Social Security Code, OSH Code & Central Rules",
+     "https://www.labour.gov.in/offerings/schemes-and-services/details/labour-codes-gzNzQzMtQWa"
+    ]
+   ],
+   "forms": [
+    [
+     "Udyam Registration (MSME)",
+     "Free MSME registration and updates",
+     "https://udyamregistration.gov.in/"
+    ],
+    [
+     "Trademark, Patent & Design – IP India",
+     "Filing, search and status of IP applications",
+     "https://ipindia.gov.in/"
+    ],
+    [
+     "Haryana Excise & Taxation",
+     "State tax registrations, returns and payments",
+     "https://www.haryanatax.gov.in/"
+    ]
+   ],
+   "calc_widgets": [
+    "gratuity",
+    "pfesi"
+   ],
+   "calcs": [],
+   "others": [
+    [
+     "ICAI",
+     "Institute of Chartered Accountants of India",
+     "https://www.icai.org/"
+    ],
+    [
+     "Garg Raghav & Associates",
+     "Our associate firm",
+     "https://gargraghav.in/"
+    ],
+    [
+     "Book a free consultation",
+     "Talk to us about any of these areas",
+     "/contact/"
+    ]
+   ]
+  },
+  "finance": {
+   "title": "Finance",
+   "icon": "",
+   "intro": "Foreign exchange (FEMA), banking, securities and insolvency law, with the RBI, SEBI and IBBI portals used for filings and approvals.",
+   "acts": [
+    [
+     "FEMA, 1999 – RBI Master Directions",
+     "Master Directions and regulations on foreign investment, ECB, LRS and remittances",
+     "https://www.rbi.org.in/"
+    ],
+    [
+     "Insolvency and Bankruptcy Code, 2016",
+     "IBBI – Code, regulations and valuation rules",
+     "https://ibbi.gov.in/"
+    ],
+    [
+     "SEBI Acts & Regulations",
+     "Securities laws, LODR, ICDR and circulars",
+     "https://www.sebi.gov.in/"
+    ],
+    [
+     "India Code – Banking & finance Acts",
+     "Banking Regulation Act, RBI Act, SARFAESI and other Central Acts",
+     "https://www.indiacode.nic.in/"
+    ]
+   ],
+   "forms": [
+    [
+     "FIRMS portal (RBI)",
+     "FDI reporting: FC-GPR, FC-TRS and single master form",
+     "https://firms.rbi.org.in/"
+    ],
+    [
+     "IBBI – forms and filings",
+     "Forms for insolvency professionals and registered valuers",
+     "https://ibbi.gov.in/"
+    ],
+    [
+     "Udyam Registration (MSME)",
+     "Free MSME registration, needed for MSME loans and schemes",
+     "https://udyamregistration.gov.in/"
+    ],
+    [
+     "CERSAI",
+     "Registration of security interest by lenders",
+     "https://www.cersai.org.in/"
+    ]
+   ],
+   "calc_widgets": [
+    "emi",
+    "deposit"
+   ],
+   "calcs": [],
+   "others": [
+    [
+     "Reserve Bank of India",
+     "Notifications, circulars and policy rates",
+     "https://www.rbi.org.in/"
+    ],
+    [
+     "SEBI",
+     "Securities and Exchange Board of India",
+     "https://www.sebi.gov.in/"
+    ],
+    [
+     "Need help with project finance or FEMA?",
+     "DPR, CMA data, loan syndication and FEMA filings",
+     "/contact/"
+    ]
+   ]
+  }
+ }
+}
