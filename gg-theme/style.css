@@ -3,7 +3,7 @@ Theme Name:   GG Theme
 Theme URI:    https://ggassociates.in/
 Description:  Custom theme for Garg Garg & Associates and group, in a warm brown and orange style: textured background, serif headings, two-line main menu, separate professional utilities bar, illustrated tiles. Use with the GG Site plugin.
 Author:       Garg Garg & Associates
-Version: 2.4.0
+Version: 2.4.1
 Requires at least: 6.4
 Requires PHP: 7.4
 License:      GPL-2.0-or-later
@@ -343,6 +343,9 @@ input[type="checkbox"] { width: 18px; height: 18px; accent-color: var(--orange);
 .gg-form label small { color: var(--dim); }
 .gg-form .lbl span { color: var(--orange-2); }
 .gg-form .gg-check { margin-bottom: 18px; color: var(--muted); }
+.gg-form .gg-human { display: block; margin: 4px 0 16px; }
+.gg-form .gg-human .lbl { display: block; margin-bottom: 6px; }
+.gg-form .gg-human input { width: 110px; max-width: 100%; text-align: center; font-size: 1.05rem; }
 .gg-form button[type="submit"] { width: 100%; }
 .gg-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 .gg-alert { padding: 12px 16px; margin-bottom: 16px; font-size: .95rem; background: var(--panel); }

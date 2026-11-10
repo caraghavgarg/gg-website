@@ -33,6 +33,8 @@ add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
 			: '<div class="gg-alert gg-alert--ok" role="status">Thank you. Your request has reached our office; we usually reply within one working day.</div>';
 	} elseif ( 'error' === $status ) {
 		$msg = '<div class="gg-alert gg-alert--err" role="alert">Please fill in your name, a valid email or phone number, ' . ( $structure ? 'your address, your requirement' : 'a message' ) . ', and tick the consent box.</div>';
+	} elseif ( 'human' === $status ) {
+		$msg = '<div class="gg-alert gg-alert--err" role="alert">The answer to the check question was not right. Please try again.</div>';
 	} elseif ( 'limit' === $status ) {
 		$msg = '<div class="gg-alert gg-alert--err" role="alert">Too many requests from this connection. Please call or email us instead.</div>';
 	}
@@ -43,6 +45,10 @@ add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
 	$action = esc_url( admin_url( 'admin-post.php' ) );
 	$token  = wp_create_nonce( 'ggs_enquiry' );
 	$ts     = time();
+	// Human check: a small sum; the answer is never sent to the page, only a signed hash of it.
+	$qa     = wp_rand( 2, 9 );
+	$qb     = wp_rand( 1, 9 );
+	$hc     = wp_hash( ( $qa + $qb ) . '|' . $ts . '|ggs-human' );
 	ob_start();
 	?>
 	<form class="gg-form" id="enquiry" method="post" action="<?php echo $action; // phpcs:ignore ?>" novalidate>
@@ -71,6 +77,8 @@ add_shortcode( 'gg_enquiry', function ( $atts = array() ) {
 				<label class="gg-form-wide"><span class="lbl">Message <span aria-hidden="true">*</span></span><textarea name="message" rows="5" required maxlength="3000"></textarea></label>
 			<?php endif; ?>
 		</div>
+		<input type="hidden" name="hc" value="<?php echo esc_attr( $hc ); ?>">
+		<label class="gg-human"><span class="lbl">Please confirm you are human: what is <?php echo (int) $qa; ?> + <?php echo (int) $qb; ?>? <span aria-hidden="true">*</span></span><input type="text" name="human" inputmode="numeric" pattern="[0-9]*" maxlength="2" required autocomplete="off"></label>
 		<label class="gg-check"><input type="checkbox" name="consent" value="1" required> <span>I agree that the firm may use these details to respond to my request. They are not shared with anyone else.</span></label>
 		<button type="submit" class="gg-btn gg-btn--gold"><?php echo $careers ? 'Send application' : 'Send request'; ?></button>
 		<p class="gg-note"><?php echo $careers ? 'Email your CV (PDF) to ' . esc_html( ggs_setting( 'email' ) ) . ' with the position in the subject line. Please do not send PAN or Aadhaar copies.' : 'Please do not send PAN, Aadhaar, passwords or documents through this form.'; ?></p>
@@ -97,6 +105,12 @@ function ggs_handle_enquiry() {
 	$ts = isset( $_POST['ts'] ) ? absint( $_POST['ts'] ) : 0;
 	if ( ! empty( $_POST['website'] ) || ( time() - $ts ) < 3 ) {
 		$go( 'sent' );
+	}
+
+	$human = isset( $_POST['human'] ) ? preg_replace( '/\D/', '', sanitize_text_field( wp_unslash( $_POST['human'] ) ) ) : '';
+	$hc    = isset( $_POST['hc'] ) ? sanitize_text_field( wp_unslash( $_POST['hc'] ) ) : '';
+	if ( '' === $human || ! hash_equals( wp_hash( (int) $human . '|' . $ts . '|ggs-human' ), $hc ) ) {
+		$go( 'human' );
 	}
 
 	$ip_key = 'ggs_enq_' . md5( isset( $_SERVER['REMOTE_ADDR'] ) ? sanitize_text_field( wp_unslash( $_SERVER['REMOTE_ADDR'] ) ) : 'x' );

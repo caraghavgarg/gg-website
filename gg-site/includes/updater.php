@@ -38,11 +38,14 @@ function ggs_remote_versions( $force = false ) {
 }
 
 /** "Check again" on Dashboard → Updates also re-reads the repository. */
-add_action( 'load-update-core.php', function () {
-	if ( isset( $_GET['force-check'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+add_action( 'admin_init', function () {
+	global $pagenow;
+	if ( 'update-core.php' === $pagenow && isset( $_GET['force-check'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
 		delete_site_transient( 'ggs_remote_versions' );
+		delete_site_transient( 'update_plugins' );
+		delete_site_transient( 'update_themes' );
 	}
-} );
+}, 1 );
 
 add_filter( 'pre_set_site_transient_update_plugins', function ( $transient ) {
 	if ( ! is_object( $transient ) ) {
