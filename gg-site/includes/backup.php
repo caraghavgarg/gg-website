@@ -73,6 +73,10 @@ function ggs_backup_page() {
 		echo '<em>Zip support is not available on this server.</em>';
 	}
 	echo '</td></tr></tbody></table>';
+	if ( isset( $_GET['saved'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification
+		echo '<div class="notice notice-success"><p>Saved.</p></div>';
+	}
+	ggs_backup_monthly_section();
 	echo '<h2>Restoring</h2><ul style="list-style:disc;margin-left:20px;max-width:760px">';
 	echo '<li><strong>Easiest:</strong> use <a href="' . esc_url( admin_url( 'options-general.php?page=updraftplus' ) ) . '">UpdraftPlus</a> → Existing backups → Restore. It keeps scheduled copies and restores in one click.</li>';
 	echo '<li><strong>From a GG Backup file:</strong> import <code>database.sql</code> with phpMyAdmin in your hosting panel, and upload the <code>wp-content</code> folder with the hosting File Manager. The file <code>wp-config.php</code> (which holds the database password) is deliberately not included; keep the one already on the server.</li>';
@@ -158,23 +162,18 @@ add_action( 'admin_post_ggs_backup_db', function () {
 	ggs_backup_send( ggs_backup_write_db( $path ), ggs_backup_name( '-database.sql.gz' ), 'application/gzip' );
 } );
 
-add_action( 'admin_post_ggs_backup_full', function () {
-	ggs_backup_guard();
+/** Build a full backup zip (database + wp-content) at $path. Returns true on success. */
+function ggs_backup_build_full( $path ) {
 	if ( ! class_exists( 'ZipArchive' ) ) {
-		wp_safe_redirect( admin_url( 'tools.php?page=gg-backup&ggs_backup_error=1' ) );
-		exit;
+		return false;
 	}
-	$dir  = ggs_backup_dir();
-	$key  = wp_generate_password( 20, false );
-	$sqlg = ggs_backup_write_db( $dir . '/db-' . $key . '.sql.gz' );
+	$sqlg = ggs_backup_write_db( ggs_backup_dir() . '/db-' . wp_generate_password( 20, false ) . '.sql.gz' );
 	$zip  = new ZipArchive();
-	$path = $dir . '/full-' . $key . '.zip';
 	if ( ! $sqlg || true !== $zip->open( $path, ZipArchive::CREATE | ZipArchive::OVERWRITE ) ) {
-		wp_safe_redirect( admin_url( 'tools.php?page=gg-backup&ggs_backup_error=1' ) );
-		exit;
+		return false;
 	}
 	$zip->addFile( $sqlg, 'database.sql.gz' );
-	$zip->addFromString( 'README.txt', "GG Backup of " . home_url() . "\nCreated " . wp_date( 'j M Y H:i' ) . "\n\ndatabase.sql.gz  - the database (import with phpMyAdmin)\nwp-content/      - theme, plugins and uploaded files\n\nwp-config.php is not included on purpose; keep the one on the server.\n" );
+	$zip->addFromString( 'README.txt', 'GG Backup of ' . home_url() . "\nCreated " . wp_date( 'j M Y H:i' ) . "\n\ndatabase.sql.gz  - the database (import with phpMyAdmin)\nwp-content/      - theme, plugins and uploaded files\n\nwp-config.php is not included on purpose; keep the one on the server.\n" );
 	$it = new RecursiveIteratorIterator( new RecursiveDirectoryIterator( WP_CONTENT_DIR, FilesystemIterator::SKIP_DOTS ) );
 	foreach ( $it as $f ) {
 		if ( ! $f->isFile() ) {
@@ -188,7 +187,154 @@ add_action( 'admin_post_ggs_backup_full', function () {
 	if ( file_exists( ABSPATH . '.htaccess' ) ) {
 		$zip->addFile( ABSPATH . '.htaccess', '.htaccess' );
 	}
-	$zip->close();
+	$ok = $zip->close();
 	wp_delete_file( $sqlg );
+	return $ok && file_exists( $path );
+}
+
+add_action( 'admin_post_ggs_backup_full', function () {
+	ggs_backup_guard();
+	$path = ggs_backup_dir() . '/full-' . wp_generate_password( 20, false ) . '.zip';
+	if ( ! ggs_backup_build_full( $path ) ) {
+		wp_safe_redirect( admin_url( 'tools.php?page=gg-backup&ggs_backup_error=1' ) );
+		exit;
+	}
 	ggs_backup_send( $path, ggs_backup_name( '-full.zip' ), 'application/zip' );
 } );
+
+/* ---------------- Monthly backup: kept on the server, link emailed ---------------- */
+
+function ggs_backup_monthly_opts() {
+	return wp_parse_args( (array) get_option( 'ggs_backup_monthly', array() ), array(
+		'on'    => 1,
+		'email' => 'mail@ggassociates.in',
+		'file'  => '',
+		'made'  => 0,
+		'sent'  => '',
+	) );
+}
+
+add_filter( 'cron_schedules', function ( $s ) {
+	$s['ggs_monthly'] = array( 'interval' => 30 * DAY_IN_SECONDS, 'display' => 'Every 30 days (GG Backup)' );
+	return $s;
+} );
+
+add_action( 'init', function () {
+	$o = ggs_backup_monthly_opts();
+	$next = wp_next_scheduled( 'ggs_backup_monthly' );
+	if ( $o['on'] && ! $next ) {
+		wp_schedule_event( time() + 30 * DAY_IN_SECONDS, 'ggs_monthly', 'ggs_backup_monthly' );
+	} elseif ( ! $o['on'] && $next ) {
+		wp_clear_scheduled_hook( 'ggs_backup_monthly' );
+	}
+} );
+
+/** Make this month's full backup, remove the previous one, and email a download link. */
+function ggs_backup_run_monthly() {
+	$o = ggs_backup_monthly_opts();
+	if ( function_exists( 'set_time_limit' ) ) {
+		@set_time_limit( 0 ); // phpcs:ignore
+	}
+	$key  = wp_generate_password( 32, false );
+	$file = 'monthly-' . $key . '.zip';
+	$path = ggs_backup_dir() . '/' . $file;
+	if ( ! ggs_backup_build_full( $path ) ) {
+		$o['sent'] = 'Failed on ' . wp_date( 'j M Y H:i' );
+		update_option( 'ggs_backup_monthly', $o, false );
+		return false;
+	}
+	if ( $o['file'] && $o['file'] !== $file ) {
+		wp_delete_file( ggs_backup_dir() . '/' . basename( $o['file'] ) );
+	}
+	$o['file'] = $file;
+	$o['made'] = time();
+	// Count the next 30 days from this backup, whether it was automatic or made by hand.
+	wp_clear_scheduled_hook( 'ggs_backup_monthly' );
+	if ( $o['on'] ) {
+		wp_schedule_event( time() + 30 * DAY_IN_SECONDS, 'ggs_monthly', 'ggs_backup_monthly' );
+	}
+	$link      = add_query_arg( array( 'action' => 'ggs_backup_get', 'k' => $key ), admin_url( 'admin-post.php' ) );
+	$to        = is_email( $o['email'] ) ? $o['email'] : get_option( 'admin_email' );
+	$size      = size_format( filesize( $path ) );
+	$body      = "The monthly backup of " . home_url() . " is ready (" . $size . ", made " . wp_date( 'j M Y H:i' ) . ").\n\n"
+		. "Download it here (you will be asked to log in to WordPress as an administrator):\n" . $link . "\n\n"
+		. "The link stays valid until next month's backup replaces it. Keep the downloaded file somewhere safe: it contains the whole website, including enquiries and user accounts.\n\n"
+		. "To restore, see Tools > GG Backup in the WordPress dashboard.\n";
+	$sent      = wp_mail( $to, 'Monthly website backup ready: ' . wp_parse_url( home_url(), PHP_URL_HOST ), $body );
+	$o['sent'] = ( $sent ? 'Link emailed to ' . $to : 'Backup made but the email could not be sent' ) . ' on ' . wp_date( 'j M Y H:i' );
+	update_option( 'ggs_backup_monthly', $o, false );
+	return true;
+}
+add_action( 'ggs_backup_monthly', 'ggs_backup_run_monthly' );
+
+/** Logged out: go to the login screen, then come back to the download. */
+add_action( 'admin_post_nopriv_ggs_backup_get', function () {
+	$k = isset( $_GET['k'] ) ? preg_replace( '/[^A-Za-z0-9]/', '', (string) wp_unslash( $_GET['k'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	wp_safe_redirect( wp_login_url( add_query_arg( array( 'action' => 'ggs_backup_get', 'k' => $k ), admin_url( 'admin-post.php' ) ) ) );
+	exit;
+} );
+
+/** Download link from the email: administrators only; the key must match this month's file. */
+add_action( 'admin_post_ggs_backup_get', function () {
+	if ( ! current_user_can( 'manage_options' ) ) {
+		wp_die( 'Please log in as an administrator to download the backup.' );
+	}
+	$o   = ggs_backup_monthly_opts();
+	$key = isset( $_GET['k'] ) ? preg_replace( '/[^A-Za-z0-9]/', '', (string) wp_unslash( $_GET['k'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
+	if ( '' === $key || ! $o['file'] || ! hash_equals( 'monthly-' . $key . '.zip', $o['file'] ) ) {
+		wp_die( 'This backup link has expired. A newer backup may be available under Tools > GG Backup.' );
+	}
+	$path = ggs_backup_dir() . '/' . $o['file'];
+	if ( ! file_exists( $path ) ) {
+		wp_die( 'The backup file is no longer on the server.' );
+	}
+	while ( ob_get_level() ) {
+		ob_end_clean();
+	}
+	nocache_headers();
+	header( 'Content-Type: application/zip' );
+	header( 'Content-Disposition: attachment; filename="' . ggs_backup_name( '-monthly.zip' ) . '"' );
+	header( 'Content-Length: ' . filesize( $path ) );
+	readfile( $path ); // phpcs:ignore WordPress.WP.AlternativeFunctions
+	exit;
+} );
+
+add_action( 'admin_post_ggs_backup_monthly_save', function () {
+	if ( ! current_user_can( 'manage_options' ) || ! check_admin_referer( 'ggs_backup' ) ) {
+		wp_die( 'Not allowed.' );
+	}
+	$o          = ggs_backup_monthly_opts();
+	$o['on']    = empty( $_POST['on'] ) ? 0 : 1;
+	$email      = sanitize_email( wp_unslash( $_POST['email'] ?? '' ) );
+	$o['email'] = is_email( $email ) ? $email : $o['email'];
+	update_option( 'ggs_backup_monthly', $o, false );
+	if ( ! empty( $_POST['now'] ) ) {
+		ggs_backup_guard_light();
+		ggs_backup_run_monthly();
+	}
+	wp_safe_redirect( admin_url( 'tools.php?page=gg-backup&saved=1' ) );
+	exit;
+} );
+
+function ggs_backup_guard_light() {
+	if ( function_exists( 'set_time_limit' ) ) {
+		@set_time_limit( 0 ); // phpcs:ignore
+	}
+	ignore_user_abort( true );
+	wp_raise_memory_limit( 'admin' );
+}
+
+/** Monthly section shown on Tools > GG Backup. */
+function ggs_backup_monthly_section() {
+	$o    = ggs_backup_monthly_opts();
+	$next = wp_next_scheduled( 'ggs_backup_monthly' );
+	echo '<h2>Monthly backup by email link</h2><p style="max-width:760px">Every 30 days a full backup is made and kept on the server (only the latest one), and a <strong>download link</strong> is emailed. The backup itself is never sent by email. The link works only for a logged-in administrator.</p>';
+	echo '<form method="post" action="' . esc_url( admin_url( 'admin-post.php' ) ) . '"><input type="hidden" name="action" value="ggs_backup_monthly_save">' . wp_nonce_field( 'ggs_backup', '_wpnonce', true, false );
+	echo '<table class="form-table" role="presentation"><tr><th scope="row">Monthly backup</th><td><label><input type="checkbox" name="on" value="1"' . checked( $o['on'], 1, false ) . '> Make a backup every 30 days and email the link</label></td></tr>';
+	echo '<tr><th scope="row"><label for="ggs_bk_email">Send the link to</label></th><td><input type="email" id="ggs_bk_email" name="email" value="' . esc_attr( $o['email'] ) . '" class="regular-text"></td></tr>';
+	echo '<tr><th scope="row">Status</th><td>' . ( $o['made'] ? 'Latest backup: ' . esc_html( wp_date( 'j M Y H:i', $o['made'] ) ) . '. ' : 'No monthly backup yet. ' ) . ( $o['sent'] ? esc_html( $o['sent'] ) . '. ' : '' ) . ( $next ? 'Next: ' . esc_html( wp_date( 'j M Y', $next ) ) . '.' : '' ) . '</td></tr></table>';
+	submit_button( 'Save', 'secondary', 'save', false );
+	echo ' ';
+	submit_button( 'Save and make a backup now', 'primary', 'now', false );
+	echo '</form>';
+}
