@@ -1,0 +1,44 @@
+{{define "layout"}}<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#28292c">
+<title>{{.Title}} · {{.Office}} Office</title>
+<link rel="stylesheet" href="/static/app.css?v=1">
+<link rel="icon" href="/static/icon.svg" type="image/svg+xml">
+</head>
+<body class="{{if .Me}}in{{else}}out{{end}}">
+{{if .Me}}
+<aside class="side" id="side">
+  <a class="brand" href="/"><span class="mark">GG</span><span><b>{{.Office}}</b><small>Office</small></span></a>
+  <nav>
+    <a href="/" class="{{if eq .Nav "home"}}on{{end}}"><i class="i-home"></i>Today</a>
+    <a href="/work" class="{{if eq .Nav "work"}}on{{end}}"><i class="i-work"></i>Work tracker</a>
+    <a href="/clients" class="{{if eq .Nav "clients"}}on{{end}}"><i class="i-clients"></i>Clients</a>
+    <a href="/notices" class="{{if eq .Nav "notices"}}on{{end}}"><i class="i-notice"></i>Notices</a>
+    <a href="/calendar" class="{{if eq .Nav "calendar"}}on{{end}}"><i class="i-cal"></i>Due dates</a>
+    <span class="nav-h">Staff</span>
+    <a href="/attendance" class="{{if eq .Nav "attendance"}}on{{end}}"><i class="i-clock"></i>Attendance</a>
+    <a href="/leave" class="{{if eq .Nav "leave"}}on{{end}}"><i class="i-leave"></i>Leave</a>
+    <a href="/log" class="{{if eq .Nav "log"}}on{{end}}"><i class="i-log"></i>Daily work log</a>
+    {{if admin .Me}}<span class="nav-h">Admin</span>
+    <a href="/users" class="{{if eq .Nav "users"}}on{{end}}"><i class="i-users"></i>Staff &amp; logins</a>
+    <a href="/settings" class="{{if eq .Nav "settings"}}on{{end}}"><i class="i-gear"></i>Settings &amp; backup</a>{{end}}
+  </nav>
+  <div class="me">
+    <a href="/account" class="who"><span class="av">{{initials .Me.Name}}</span><span>{{.Me.Name}}<small>{{.Me.Role}}</small></span></a>
+    <form method="post" action="/logout"><button class="link">Sign out</button></form>
+  </div>
+</aside>
+<header class="topbar"><button class="burger" type="button" aria-label="Menu" onclick="document.body.classList.toggle('nav-open')"><span></span><span></span><span></span></button><b>{{.Title}}</b></header>
+<div class="scrim" onclick="document.body.classList.remove('nav-open')"></div>
+{{end}}
+<main class="main">
+  {{if .Flash}}<div class="flash">{{.Flash}}</div>{{end}}
+  {{if .Error}}<div class="flash err">{{.Error}}</div>{{end}}
+  {{template "content" .}}
+</main>
+<script src="/static/app.js?v=1"></script>
+</body>
+</html>{{end}}

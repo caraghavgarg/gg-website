@@ -1,0 +1,15 @@
+{{define "content"}}
+<div class="auth">
+  <div class="auth-mark">GG</div>
+  <h1>Set up GG Office</h1>
+  <p class="muted">This is the first start. Create the administrator login. You will add partners and staff on the next page.</p>
+  <form method="post" class="stack">
+    <label>Office name<input name="office" value="{{or .V.OfficeName "GG Associates"}}"></label>
+    <label>Your name<input name="name" value="{{.V.Name}}" required autofocus></label>
+    <label>Username <small>(used to sign in, no spaces)</small><input name="username" value="{{.V.Username}}" required autocapitalize="none" autocomplete="username"></label>
+    <label>Password <small>(at least 8 characters)</small><input type="password" name="pass" required minlength="8" autocomplete="new-password"></label>
+    <label>Type the password again<input type="password" name="pass2" required minlength="8" autocomplete="new-password"></label>
+    <button class="btn">Create administrator</button>
+  </form>
+</div>
+{{end}}

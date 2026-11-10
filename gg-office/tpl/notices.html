@@ -1,0 +1,21 @@
+{{define "content"}}
+<div class="head-row"><h1>Notices register <small class="muted">{{len .V.List}} shown</small></h1>
+  <div class="btns"><a class="btn line" href="/notices/export.csv">Export all</a><a class="btn" href="/notices/new">+ Add notice</a></div></div>
+<form class="filters" method="get" data-autosubmit>
+  <input type="search" name="q" value="{{.V.Q}}" placeholder="Search client, section, DIN, AY">
+  <select name="who"><option value="all" {{sel .V.Who "all"}}>Everyone</option><option value="me" {{sel .V.Who "me"}}>With me</option>{{range .V.Users}}<option value="{{.ID}}" {{sel .ID $.V.Who}}>{{.Name}}</option>{{end}}</select>
+  <select name="status"><option value="open" {{sel .V.Status "open"}}>All open</option><option value="any" {{sel .V.Status "any"}}>Open and closed</option>{{range .V.Statuses}}<option {{sel . $.V.Status}}>{{.}}</option>{{end}}</select>
+  <select name="act"><option value="">All laws</option>{{range .V.Acts}}<option {{sel . $.V.Act}}>{{.}}</option>{{end}}</select>
+</form>
+{{if .V.List}}
+<div class="card tbl"><table>
+<thead><tr><th>Client</th><th>Notice</th><th>Reply due</th><th>Hearing</th><th>With</th><th>Status</th></tr></thead>
+<tbody>{{range .V.List}}<tr class="{{due .ReplyDue .Status}}">
+  <td><a href="/notices/{{.ID}}"><b>{{cname .ClientID}}</b></a></td>
+  <td>{{.Act}}{{if .Section}} · {{.Section}}{{end}}<br><small class="muted">{{.Period}}{{if .RefNo}} · {{.RefNo}}{{end}}</small></td>
+  <td class="nowrap">{{if .ReplyDue}}<span class="duet">{{date .ReplyDue}}</span>{{end}}</td>
+  <td class="nowrap {{due .Hearing .Status}}">{{date .Hearing}}</td>
+  <td>{{or (uname .Assigned) "—"}}</td><td><span class="pill">{{.Status}}</span></td></tr>{{end}}</tbody>
+</table></div>
+{{else}}<div class="card empty-big">No notices with these filters.</div>{{end}}
+{{end}}

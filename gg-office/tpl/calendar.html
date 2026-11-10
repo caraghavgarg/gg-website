@@ -1,0 +1,28 @@
+{{define "content"}}
+<div class="head-row"><h1>Due dates · {{.V.Month}}</h1>
+  <div class="btns"><a class="btn line" href="?m={{.V.Prev}}{{if .V.Mine}}&mine=1{{end}}">← Previous</a><a class="btn line" href="/calendar{{if .V.Mine}}?mine=1{{end}}">This month</a><a class="btn line" href="?m={{.V.Next}}{{if .V.Mine}}&mine=1{{end}}">Next →</a></div></div>
+<p class="muted"><a href="?m={{.V.M}}{{if not .V.Mine}}&mine=1{{end}}">{{if .V.Mine}}Show everyone's work{{else}}Show only my work{{end}}</a> · Statutory dates are the regular ones; check extensions on the official portal.</p>
+{{if .V.Days}}
+<div class="cal">
+{{range .V.Days}}<div class="cal-day {{if eq .Date $.Today}}today{{else if and (lt .Date $.Today) (not .Works) (not .Notices)}}past{{end}}">
+  <div class="cal-date"><b>{{slice .Date 8 10}}</b><span>{{dow .Date}}</span></div>
+  <div class="cal-body">
+    {{range .Dues}}<div class="cal-due"><span class="law">{{.Law}}</span> {{.Title}}{{if partner $.Me}}<form method="post" action="/calendar/{{.ID}}/delete" class="inline" data-confirm="Remove this due date?"><input type="hidden" name="csrf" value="{{$.CSRF}}"><button class="x" title="Remove">×</button></form>{{end}}</div>{{end}}
+    {{range .Works}}<a class="cal-work" href="/work/{{.ID}}"><b>{{cname .ClientID}}</b> · {{.Type}}{{if .Period}} ({{.Period}}){{end}} <small class="muted">{{uname .Assigned}}</small></a>{{end}}
+    {{range .Notices}}<a class="cal-work notice" href="/notices/{{.ID}}"><b>{{cname .ClientID}}</b> · {{.Act}} notice {{.Section}} <small class="muted">{{uname .Assigned}}</small></a>{{end}}
+  </div></div>{{end}}
+</div>
+{{else}}<div class="card empty-big">Nothing due this month.</div>{{end}}
+{{if partner .Me}}
+<section class="card">
+  <h2>Add a due date</h2>
+  <form method="post" action="/calendar/add" class="form-grid flat">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <label>Date<input type="date" name="date" required></label>
+    <label>Law<select name="law">{{range .V.Laws}}<option>{{.}}</option>{{end}}</select></label>
+    <label class="span2">What is due<input name="title" required placeholder="e.g. Extended due date: ITR audit cases"></label>
+    <div class="actions span2"><button class="btn">Add</button></div>
+  </form>
+</section>
+{{end}}
+{{end}}

@@ -1,0 +1,44 @@
+{{define "content"}}
+{{$f := .V.F}}
+<div class="head-row"><h1>Work tracker <small class="muted">{{.V.Total}} {{if eq .V.Total 1}}entry{{else}}entries{{end}}</small></h1>
+  <div class="btns"><a class="btn line" href="/work/export.csv?{{.V.Query}}">Export</a><a class="btn line" href="/work/bulk">+ For many clients</a><a class="btn" href="/work/new">+ Add work</a></div></div>
+<form class="filters" method="get" data-autosubmit>
+  <input type="search" name="q" value="{{$f.Q}}" placeholder="Search client, PAN, period, remarks">
+  <select name="who">
+    <option value="me" {{sel $f.Who "me"}}>Assigned to me</option>
+    <option value="all" {{sel $f.Who "all"}}>Everyone</option>
+    <option value="none" {{sel $f.Who "none"}}>Not assigned</option>
+    {{range .V.Users}}<option value="{{.ID}}" {{sel .ID $f.Who}}>{{.Name}}</option>{{end}}
+  </select>
+  <select name="status">
+    <option value="open" {{sel $f.Status "open"}}>All pending</option>
+    <option value="any" {{sel $f.Status "any"}}>Pending and done</option>
+    {{range .V.Statuses}}<option {{sel . $f.Status}}>{{.}}</option>{{end}}
+  </select>
+  <select name="type"><option value="">All work types</option>{{range .V.Types}}<option {{sel . $f.Type}}>{{.}}</option>{{end}}</select>
+  <select name="due">
+    <option value="">Any due date</option>
+    <option value="overdue" {{sel $f.Due "overdue"}}>Overdue</option>
+    <option value="week" {{sel $f.Due "week"}}>Due within 7 days</option>
+    <option value="month" {{sel $f.Due "month"}}>Due within a month</option>
+    <option value="nodate" {{sel $f.Due "nodate"}}>No due date</option>
+  </select>
+  {{if $f.Client}}<input type="hidden" name="client" value="{{$f.Client}}"><a class="chip" href="?who=all">Client: {{.V.ClientName}} ✕</a>{{end}}
+</form>
+{{if .V.List}}
+<div class="card tbl"><table class="work">
+<thead><tr><th>Client</th><th>Work</th><th>With</th><th>Due</th><th>Status</th><th class="hide-sm">Remarks</th></tr></thead>
+<tbody>{{range .V.List}}<tr class="{{due .Due .Status}} pr-{{slug .Priority}}">
+  <td><a href="/work/{{.ID}}?back={{q (printf "/work?%s" $.V.Query)}}"><b>{{cname .ClientID}}</b></a></td>
+  <td>{{.Type}}{{if .Period}}<br><small class="muted">{{.Period}}</small>{{end}}</td>
+  <td>{{or (uname .Assigned) "—"}}</td>
+  <td class="nowrap">{{if .Due}}<span class="duet">{{date .Due}}</span>{{end}}{{if ne .Priority "Normal"}}<br><small class="prio">{{.Priority}}</small>{{end}}</td>
+  <td><form method="post" action="/work/{{.ID}}/status" data-autosubmit><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="back" value="/work?{{$.V.Query}}">
+    <select name="status" class="pillsel st-{{slug .Status}}" aria-label="Status">{{$s := .Status}}{{range $.V.Statuses}}<option {{sel . $s}}>{{.}}</option>{{end}}</select></form></td>
+  <td class="hide-sm small">{{.Remarks}}{{if .AckNo}} <span class="muted">Ack {{.AckNo}}</span>{{end}}</td></tr>{{end}}</tbody>
+</table></div>
+{{if gt .V.Total 600}}<p class="muted">Showing the first 600. Use the filters to narrow the list, or Export to see everything.</p>{{end}}
+{{else}}
+<div class="card empty-big">Nothing here with these filters.{{if eq $f.Who "me"}} <a href="/work?who=all">See everyone's work</a>.{{end}}</div>
+{{end}}
+{{end}}

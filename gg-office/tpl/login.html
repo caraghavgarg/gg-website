@@ -1,0 +1,14 @@
+{{define "content"}}
+<div class="auth">
+  <div class="auth-mark">GG</div>
+  <h1>{{.Office}} Office</h1>
+  <p class="muted">Sign in with the username and password the office gave you.</p>
+  <form method="post" class="stack">
+    <input type="hidden" name="next" value="{{.V.Next}}">
+    <label>Username<input name="username" value="{{.V.Username}}" required autofocus autocapitalize="none" autocomplete="username"></label>
+    <label>Password<input type="password" name="pass" required autocomplete="current-password"></label>
+    <button class="btn">Sign in</button>
+  </form>
+  <p class="muted small">Forgot your password? Ask the office administrator to set a new one.</p>
+</div>
+{{end}}

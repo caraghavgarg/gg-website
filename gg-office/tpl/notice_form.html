@@ -1,0 +1,35 @@
+{{define "content"}}
+{{$n := .V.N}}
+<h1>{{if $n.ID}}{{cname $n.ClientID}} · {{$n.Act}} notice{{else}}Add a notice{{end}}</h1>
+<form method="post" class="card form-grid">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <label class="span2">Client
+    <input type="search" class="pick-filter" data-for="client_id" placeholder="Type to find the client…" {{if not $n.ClientID}}autofocus{{end}}>
+    <select name="client_id" id="client_id" required><option value="">— choose —</option>{{range .V.Clients}}{{if or .Active (eq .ID $n.ClientID)}}<option value="{{.ID}}" {{sel .ID $n.ClientID}}>{{.Name}}{{if .PAN}} · {{.PAN}}{{end}}</option>{{end}}{{end}}</select></label>
+  <label>Law<select name="act">{{range .V.Acts}}<option {{sel . $n.Act}}>{{.}}</option>{{end}}</select></label>
+  <label>Section / type <small>(e.g. 143(2), 148A, ASMT-10, DRC-01)</small><input name="section" value="{{$n.Section}}"></label>
+  <label>AY / period<input name="period" value="{{$n.Period}}" placeholder="e.g. AY 2024-25"></label>
+  <label>DIN / reference no.<input name="ref_no" value="{{$n.RefNo}}"></label>
+  <label>Date of notice<input type="date" name="notice_date" value="{{$n.NoticeDate}}"></label>
+  <label>Reply due by<input type="date" name="reply_due" value="{{$n.ReplyDue}}"></label>
+  <label>Hearing date<input type="date" name="hearing" value="{{$n.Hearing}}"></label>
+  <label>Handled by
+    {{if partner .Me}}<select name="assigned"><option value="0">— not assigned —</option>{{range .V.Users}}<option value="{{.ID}}" {{sel .ID $n.Assigned}}>{{.Name}}</option>{{end}}</select>
+    {{else}}<input value="{{or (uname $n.Assigned) "—"}}" disabled>{{end}}</label>
+  <label>Status<select name="status">{{range .V.Statuses}}<option {{sel . $n.Status}}>{{.}}</option>{{end}}</select></label>
+  <label>Replied on<input type="date" name="replied_date" value="{{$n.RepliedDate}}"></label>
+  <label class="span2">What the notice asks<textarea name="summary" rows="3">{{$n.Summary}}</textarea></label>
+  <label class="span2">Remarks<textarea name="remarks" rows="2">{{$n.Remarks}}</textarea></label>
+  <div class="actions span2"><button class="btn">Save notice</button><a href="/notices">Cancel</a>
+    {{if $n.ID}}<a href="/clients/{{$n.ClientID}}">Client page</a><span class="muted small">Added {{$n.Created}} by {{uname $n.CreatedBy}}</span>{{end}}</div>
+</form>
+{{if $n.ID}}
+<section class="card" id="notes">
+  <h2>Notes &amp; updates</h2>
+  {{range .V.Comments}}<div class="cmt"><b>{{uname .UserID}}</b> <small class="muted">{{.At}}</small><p>{{nl .Text}}</p></div>{{else}}<p class="empty">No notes yet.</p>{{end}}
+  <form method="post" action="/comment" class="stack"><input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="kind" value="notice"><input type="hidden" name="ref" value="{{$n.ID}}">
+    <textarea name="text" rows="2" placeholder="Add a note: adjournment sought, reply uploaded…" required></textarea><button class="btn line sm">Add note</button></form>
+</section>
+{{if partner .Me}}<form method="post" action="/notices/{{$n.ID}}/delete" data-confirm="Delete this notice?" class="danger-zone"><input type="hidden" name="csrf" value="{{.CSRF}}"><button class="link danger">Delete this notice</button></form>{{end}}
+{{end}}
+{{end}}

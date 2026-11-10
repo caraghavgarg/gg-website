@@ -1,0 +1,8 @@
+{{define "content"}}
+<div class="head-row"><h1>Staff &amp; logins</h1><a class="btn" href="/users/new">+ Add person</a></div>
+<p class="muted">Partners and the administrator see everyone's work, assign work, approve leave and can delete records. Staff see all clients, update work and notices, and keep their own attendance and work log.</p>
+<div class="card tbl"><table>
+<thead><tr><th>Name</th><th>Username</th><th>Role</th><th>Status</th><th></th></tr></thead>
+<tbody>{{range .V.Users}}<tr class="{{if not .Active}}dim{{end}}"><td><b>{{.Name}}</b></td><td><code>{{.Username}}</code></td><td>{{.Role}}</td><td>{{if .Active}}Active{{else}}Left / disabled{{end}}</td><td class="r"><a href="/users/{{.ID}}">Edit</a></td></tr>{{end}}</tbody>
+</table></div>
+{{end}}

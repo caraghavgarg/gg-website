@@ -1,0 +1,22 @@
+{{define "content"}}
+{{$c := .V.C}}
+<h1>{{if $c.ID}}Edit {{$c.Name}}{{else}}Add a client{{end}}</h1>
+<form method="post" class="card form-grid">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <label class="span2">Client name<input name="name" value="{{$c.Name}}" required autofocus></label>
+  <label>File no.<input name="file_no" value="{{$c.FileNo}}"></label>
+  <label>Type<select name="type">{{range .V.Types}}<option {{sel . $c.Type}}>{{.}}</option>{{end}}</select></label>
+  <label>PAN<input name="pan" value="{{$c.PAN}}" maxlength="10" class="up" pattern="[A-Za-z]{5}[0-9]{4}[A-Za-z]" title="10 characters, e.g. ABCDE1234F"></label>
+  <label>GSTIN<input name="gstin" value="{{$c.GSTIN}}" maxlength="15" class="up"></label>
+  <label>TAN<input name="tan" value="{{$c.TAN}}" maxlength="10" class="up"></label>
+  <label>CIN / LLPIN<input name="cin" value="{{$c.CIN}}" maxlength="21" class="up"></label>
+  <label>Phone<input name="phone" value="{{$c.Phone}}" inputmode="tel"></label>
+  <label>Email<input name="email" value="{{$c.Email}}" type="email"></label>
+  <label>Group / family<input name="group" value="{{$c.Group}}" placeholder="e.g. Bansal family"></label>
+  <label>Usually handled by<select name="manager"><option value="0">—</option>{{range .V.Users}}<option value="{{.ID}}" {{sel .ID $c.Manager}}>{{.Name}}</option>{{end}}</select></label>
+  <label class="span2">Address<textarea name="address" rows="2">{{$c.Address}}</textarea></label>
+  <label class="span2">Notes<textarea name="notes" rows="3" placeholder="Passwords must NOT be written here.">{{$c.Notes}}</textarea></label>
+  <label class="check span2"><input type="checkbox" name="active" value="1" {{chk $c.Active}}> Active client</label>
+  <div class="actions span2"><button class="btn">Save client</button><a href="{{if $c.ID}}/clients/{{$c.ID}}{{else}}/clients{{end}}">Cancel</a></div>
+</form>
+{{end}}

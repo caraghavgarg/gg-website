@@ -1,0 +1,26 @@
+{{define "content"}}
+<div class="head-row"><h1>Daily work log · {{date .V.Date}}</h1>
+  <div class="btns"><a class="btn line" href="?d={{.V.Prev}}{{if partner .Me}}&u={{.V.U}}{{end}}">← Previous day</a><a class="btn line" href="/log">Today</a><a class="btn line" href="?d={{.V.Next}}{{if partner .Me}}&u={{.V.U}}{{end}}">Next day →</a></div></div>
+<div class="grid2">
+<section class="card">
+  <h2>Add what I worked on</h2>
+  <form method="post" class="form-grid flat">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <label>Date<input type="date" name="date" value="{{.V.Date}}"></label>
+    <label>Hours <small>(optional)</small><input name="hours" inputmode="decimal" placeholder="e.g. 2.5"></label>
+    <label class="span2">Client <small>(optional)</small>
+      <input type="search" class="pick-filter" data-for="log_client" placeholder="Type to find the client…">
+      <select name="client_id" id="log_client"><option value="0">— office / general —</option>{{range .V.Clients}}{{if .Active}}<option value="{{.ID}}">{{.Name}}</option>{{end}}{{end}}</select></label>
+    <label class="span2">Work done<textarea name="text" rows="3" required placeholder="e.g. Prepared ITR computation, reconciled 26AS"></textarea></label>
+    <div class="actions span2"><button class="btn">Add</button></div>
+  </form>
+</section>
+<section class="card">
+  <div class="card-h"><h2>Entries</h2>
+  {{if partner .Me}}<form method="get" data-autosubmit><input type="hidden" name="d" value="{{.V.Date}}"><select name="u"><option value="0">Everyone</option>{{range .V.Users}}<option value="{{.ID}}" {{sel .ID $.V.U}}>{{.Name}}</option>{{end}}</select></form>{{end}}</div>
+  {{if .V.List}}<ul class="items">{{range .V.List}}<li><span>{{if partner $.Me}}<b>{{uname .UserID}}</b> · {{end}}{{if .ClientID}}<a href="/clients/{{.ClientID}}">{{cname .ClientID}}</a> · {{end}}{{if .Hours}}{{.Hours}} h{{end}}<br>{{nl .Text}}</span>
+    {{if or (eq .UserID $.Me.ID) (partner $.Me)}}<form method="post" action="/log/{{.ID}}/delete" class="inline" data-confirm="Remove this entry?"><input type="hidden" name="csrf" value="{{$.CSRF}}"><button class="x" title="Remove">×</button></form>{{end}}</li>{{end}}</ul>
+  {{else}}<p class="empty">No entries for this day.</p>{{end}}
+</section>
+</div>
+{{end}}

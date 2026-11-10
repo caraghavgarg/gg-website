@@ -1,0 +1,14 @@
+{{define "content"}}
+<h1>My account</h1>
+<div class="card narrow">
+  <p><b>{{.Me.Name}}</b> · username <code>{{.Me.Username}}</code> · {{.Me.Role}}</p>
+  <h2>Change password</h2>
+  <form method="post" class="stack">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <label>Current password<input type="password" name="old" required autocomplete="current-password"></label>
+    <label>New password <small>(at least 8 characters)</small><input type="password" name="pass" required minlength="8" autocomplete="new-password"></label>
+    <label>New password again<input type="password" name="pass2" required minlength="8" autocomplete="new-password"></label>
+    <button class="btn">Change password</button>
+  </form>
+</div>
+{{end}}

@@ -1,0 +1,36 @@
+{{define "content"}}
+{{$c := .V.C}}
+<div class="head-row"><div><h1>{{$c.Name}}{{if not $c.Active}} <span class="pill">Inactive</span>{{end}}</h1><p class="muted">{{$c.Type}}{{if $c.FileNo}} · File {{$c.FileNo}}{{end}}{{if $c.Group}} · {{$c.Group}}{{end}}</p></div>
+  <div class="btns"><a class="btn line" href="/clients/{{$c.ID}}/edit">Edit</a><a class="btn line" href="/notices/new?client={{$c.ID}}">+ Notice</a><a class="btn" href="/work/new?client={{$c.ID}}">+ Work</a></div></div>
+<div class="grid2">
+<section class="card">
+  <dl class="facts">
+    {{if $c.PAN}}<dt>PAN</dt><dd><code>{{$c.PAN}}</code></dd>{{end}}
+    {{if $c.GSTIN}}<dt>GSTIN</dt><dd><code>{{$c.GSTIN}}</code></dd>{{end}}
+    {{if $c.TAN}}<dt>TAN</dt><dd><code>{{$c.TAN}}</code></dd>{{end}}
+    {{if $c.CIN}}<dt>CIN / LLPIN</dt><dd><code>{{$c.CIN}}</code></dd>{{end}}
+    {{if $c.Phone}}<dt>Phone</dt><dd><a href="tel:{{$c.Phone}}">{{$c.Phone}}</a></dd>{{end}}
+    {{if $c.Email}}<dt>Email</dt><dd><a href="mailto:{{$c.Email}}">{{$c.Email}}</a></dd>{{end}}
+    {{if $c.Address}}<dt>Address</dt><dd>{{nl $c.Address}}</dd>{{end}}
+    {{if $c.Manager}}<dt>Usually handled by</dt><dd>{{uname $c.Manager}}</dd>{{end}}
+  </dl>
+  {{if $c.Notes}}<h3>Notes</h3><p>{{nl $c.Notes}}</p>{{end}}
+</section>
+<section class="card">
+  <div class="card-h"><h2>Notices</h2></div>
+  {{if .V.Notices}}<ul class="items">{{range .V.Notices}}
+    <li class="{{due .ReplyDue .Status}}"><a href="/notices/{{.ID}}"><b>{{.Act}}{{if .Section}} · {{.Section}}{{end}}</b><span>{{.Period}} {{if .ReplyDue}}· reply by {{date .ReplyDue}}{{end}}</span></a><span class="pill">{{.Status}}</span></li>{{end}}</ul>
+  {{else}}<p class="empty">No notices recorded.</p>{{end}}
+</section>
+</div>
+<section class="card">
+  <div class="card-h"><h2>Work</h2></div>
+  {{if .V.Works}}<div class="tbl"><table>
+  <thead><tr><th>Work</th><th>Period</th><th>With</th><th>Due</th><th>Status</th><th>Ack / done</th></tr></thead>
+  <tbody>{{range .V.Works}}<tr class="{{due .Due .Status}}">
+    <td><a href="/work/{{.ID}}?back=/clients/{{$c.ID}}">{{.Type}}</a></td><td>{{.Period}}</td><td>{{uname .Assigned}}</td><td class="nowrap">{{date .Due}}</td>
+    <td><span class="pill st-{{slug .Status}}">{{.Status}}</span></td><td>{{.AckNo}}{{if .DoneDate}} <small class="muted">{{date .DoneDate}}</small>{{end}}</td></tr>{{end}}</tbody></table></div>
+  {{else}}<p class="empty">No work recorded for this client yet.</p>{{end}}
+</section>
+{{if partner .Me}}<form method="post" action="/clients/{{$c.ID}}/delete" data-confirm="Delete {{$c.Name}}? This cannot be undone." class="danger-zone"><input type="hidden" name="csrf" value="{{.CSRF}}"><button class="link danger">Delete this client</button></form>{{end}}
+{{end}}

@@ -1,0 +1,26 @@
+{{define "content"}}
+<h1>Leave</h1>
+<div class="grid2">
+<section class="card">
+  <h2>Apply for leave</h2>
+  <form method="post" class="form-grid flat">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <label>From<input type="date" name="from" required value="{{.Today}}"></label>
+    <label>To<input type="date" name="to" value="{{.Today}}"></label>
+    <label class="span2">Type<select name="kind">{{range .V.Kinds}}<option>{{.}}</option>{{end}}</select></label>
+    <label class="span2">Reason<input name="reason"></label>
+    <div class="actions span2"><button class="btn">Send request</button></div>
+  </form>
+</section>
+<section class="card">
+  <h2>{{if partner .Me}}All requests{{else}}My requests{{end}}</h2>
+  {{if .V.List}}<ul class="items">{{range .V.List}}<li>
+    <span>{{if partner $.Me}}<b>{{uname .UserID}}</b> · {{end}}{{.Kind}} · {{date .From}}{{if ne .From .To}} to {{date .To}}{{end}}{{if .Reason}}<br><small class="muted">{{.Reason}}</small>{{end}}
+      {{if .DecidedBy}}<br><small class="muted">{{.Status}} by {{uname .DecidedBy}}</small>{{end}}</span>
+    <span class="meta"><span class="pill lv-{{slug .Status}}">{{.Status}}</span>
+      {{if and (partner $.Me) (eq .Status "Pending")}}<form method="post" action="/leave/{{.ID}}/decide" class="inline"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="back" value="/leave"><button class="btn sm" name="status" value="Approved">Approve</button><button class="btn sm line" name="status" value="Rejected">Reject</button></form>
+      {{else if and (eq .UserID $.Me.ID) (eq .Status "Pending")}}<form method="post" action="/leave/{{.ID}}/cancel" class="inline"><input type="hidden" name="csrf" value="{{$.CSRF}}"><button class="link">Withdraw</button></form>{{end}}</span>
+  </li>{{end}}</ul>{{else}}<p class="empty">No leave requests.</p>{{end}}
+</section>
+</div>
+{{end}}

@@ -1,0 +1,37 @@
+{{define "content"}}
+<h1>Settings &amp; backup</h1>
+<div class="grid2">
+<section class="card">
+  <h2>Address for staff</h2>
+  <p>Staff open GG Office from any office computer or phone on the office Wi-Fi at:</p>
+  <ul class="addr">{{range .V.Addrs}}<li><code>{{.}}</code></li>{{else}}<li class="muted">No network address found. Check that this computer is connected to the office network.</li>{{end}}</ul>
+  <p class="muted small">If this computer's address changes after a restart, ask whoever manages your router to give it a fixed address.</p>
+  {{if .V.Windows}}
+  <h2>Start with Windows</h2>
+  <form method="post" action="/settings/startup">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    {{if .V.Startup}}<p>On: GG Office starts by itself when this computer starts.</p><button class="btn line" name="on" value="0">Switch off</button>
+    {{else}}<p>Off: someone has to open gg-office.exe after each restart.</p><button class="btn" name="on" value="1">Start automatically</button>{{end}}
+  </form>
+  {{end}}
+  <h2>Office name</h2>
+  <form method="post" class="row-form"><input type="hidden" name="csrf" value="{{.CSRF}}"><input name="office" value="{{.Office}}"><button class="btn line">Save</button></form>
+</section>
+<section class="card">
+  <h2>Backup</h2>
+  <p>A copy of all office data is saved automatically every day; the last 30 days are kept in<br><code class="wrap">{{.V.DataDir}}\backups</code>.</p>
+  <p>To keep a copy away from this computer, download one now and then and save it to a pen drive or Google Drive.</p>
+  <p><a class="btn" href="/settings/backup">Download a backup now</a></p>
+  {{if .V.Backups}}<details><summary>Daily copies ({{len .V.Backups}})</summary><ul class="addr">{{range .V.Backups}}<li><a href="/settings/backup?f={{.}}">{{.}}</a></li>{{end}}</ul></details>{{end}}
+  <h2>Restore from a backup</h2>
+  <p class="muted small">Replaces ALL current data with the backup file. What you replace is saved in the backups folder first.</p>
+  <form method="post" action="/settings/restore" enctype="multipart/form-data" class="stack">
+    <input type="hidden" name="csrf" value="{{.CSRF}}">
+    <input type="file" name="file" accept=".json" required>
+    <label>Type RESTORE to confirm<input name="confirm" autocomplete="off" required></label>
+    <button class="btn line danger">Restore</button>
+  </form>
+</section>
+</div>
+<p class="muted small">GG Office {{.V.Version}} · data folder {{.V.DataDir}}</p>
+{{end}}

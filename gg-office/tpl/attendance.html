@@ -1,0 +1,31 @@
+{{define "content"}}
+<div class="head-row"><h1>Attendance</h1>
+  <form method="post" action="/attendance/punch" class="punch">
+    <input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="back" value="/attendance">
+    {{with .V.Mine}}<span class="muted">Today: in {{.In}}{{if .Out}}, out {{.Out}}{{end}}</span><button class="btn line" name="what" value="out">{{if .Out}}Update check-out{{else}}Check out{{end}}</button>
+    {{else}}<button class="btn" name="what" value="in">Check in now</button>{{end}}
+  </form></div>
+
+{{if partner .Me}}
+<section class="card">
+  <div class="card-h"><h2>Today, {{date .Today}}</h2><a href="/attendance/export.csv?m={{.V.M}}">Export {{.V.Month}} for all staff</a></div>
+  <div class="chips">{{range .V.TodayAll}}<a href="/attendance?u={{.User.ID}}&m={{$.V.M}}" class="chip {{if .OnLeave}}leave{{else if .In}}in{{else}}absent{{end}}">{{.User.Name}} <small>{{if .OnLeave}}leave{{else if .In}}{{.In}}{{if .Out}}–{{.Out}}{{end}}{{else}}not in{{end}}</small></a>{{end}}</div>
+</section>
+{{end}}
+
+<section class="card">
+  <div class="card-h"><h2>{{.V.Who.Name}} · {{.V.Month}}</h2>
+    <span class="btns"><a href="?u={{.V.Who.ID}}&m={{.V.Prev}}">← Prev</a> <a href="?u={{.V.Who.ID}}&m={{.V.Next}}">Next →</a></span></div>
+  {{if partner .Me}}<form method="get" class="filters" data-autosubmit><input type="hidden" name="m" value="{{.V.M}}"><select name="u">{{range .V.Users}}<option value="{{.ID}}" {{sel .ID $.V.Who.ID}}>{{.Name}}</option>{{end}}</select></form>{{end}}
+  <p class="muted">Days present: <b>{{.V.Present}}</b> · Days on approved leave: <b>{{.V.Leaves}}</b></p>
+  <div class="tbl"><table>
+  <thead><tr><th>Date</th><th>In</th><th>Out</th><th>Hours</th><th>Note</th>{{if partner .Me}}<th>Correct</th>{{end}}</tr></thead>
+  <tbody>{{range .V.Rows}}<tr class="{{if .Sunday}}dim{{end}}">
+    <td class="nowrap">{{date .Date}} <small class="muted">{{.Day}}</small></td>
+    <td>{{if .In}}{{.In}}{{else if .Leave}}<span class="pill">{{.Leave}}</span>{{else if .Sunday}}<small class="muted">Sunday</small>{{else}}–{{end}}</td>
+    <td>{{.Out}}</td><td>{{.Hours}}</td><td class="small">{{.Note}}</td>
+    {{if partner $.Me}}<td><form method="post" action="/attendance/edit" class="att-edit"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="u" value="{{$.V.Who.ID}}"><input type="hidden" name="date" value="{{.Date}}">
+      <input type="time" name="in" value="{{.In}}" aria-label="In"><input type="time" name="out" value="{{.Out}}" aria-label="Out"><input name="note" value="{{.Note}}" placeholder="note" aria-label="Note"><button class="btn sm line">Save</button></form></td>{{end}}
+  </tr>{{end}}</tbody></table></div>
+</section>
+{{end}}

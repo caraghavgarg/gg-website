@@ -1,0 +1,18 @@
+{{define "content"}}
+{{$u := .V.Item}}
+<h1>{{if $u.ID}}Edit {{$u.Name}}{{else}}Add a person{{end}}</h1>
+<form method="post" class="card narrow stack">
+  <input type="hidden" name="csrf" value="{{.CSRF}}">
+  <label>Full name<input name="name" value="{{$u.Name}}" required autofocus></label>
+  <label>Username <small>(for signing in, no spaces, e.g. "amit")</small><input name="username" value="{{$u.Username}}" required autocapitalize="none" autocomplete="off"></label>
+  <label>Role<select name="role">
+    <option value="staff" {{sel $u.Role "staff"}}>Staff: own work first, cannot delete or assign</option>
+    <option value="partner" {{sel $u.Role "partner"}}>Partner: sees all, assigns work, approves leave</option>
+    <option value="admin" {{sel $u.Role "admin"}}>Administrator: partner rights plus logins, settings and backup</option>
+  </select></label>
+  <label>{{if $u.ID}}New password <small>(leave empty to keep the current one)</small>{{else}}First password <small>(at least 8 characters; ask them to change it)</small>{{end}}
+    <input type="text" name="pass" {{if not $u.ID}}required{{end}} minlength="8" autocomplete="off"></label>
+  <label class="check"><input type="checkbox" name="active" value="1" {{chk $u.Active}}> Can sign in (untick when someone leaves; their history stays)</label>
+  <div class="actions"><button class="btn">Save</button><a href="/users">Cancel</a></div>
+</form>
+{{end}}

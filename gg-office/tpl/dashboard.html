@@ -1,0 +1,82 @@
+{{define "content"}}
+<div class="head-row">
+  <div><h1>Good day, {{.Me.Name}}</h1><p class="muted">{{date .Today}}</p></div>
+  <form method="post" action="/attendance/punch" class="punch">
+    <input type="hidden" name="csrf" value="{{.CSRF}}"><input type="hidden" name="back" value="/">
+    {{with .V.Att}}
+      <span class="muted">In {{.In}}{{if .Out}} · Out {{.Out}}{{end}}</span>
+      <button class="btn line" name="what" value="out">{{if .Out}}Update check-out{{else}}Check out{{end}}</button>
+    {{else}}
+      <span class="muted">Not checked in yet</span>
+      <button class="btn" name="what" value="in">Check in</button>
+    {{end}}
+  </form>
+</div>
+
+<div class="stats">
+  <a class="stat" href="/work?who=me"><b>{{or .V.C.open 0}}</b><span>My open work</span></a>
+  <a class="stat {{if .V.C.over}}bad{{end}}" href="/work?who=me&due=overdue"><b>{{or .V.C.over 0}}</b><span>Overdue</span></a>
+  <a class="stat" href="/work?who=me&due=week"><b>{{or .V.C.week 0}}</b><span>Due in 7 days</span></a>
+  <a class="stat" href="/notices?who=me"><b>{{or .V.C.notices 0}}</b><span>Open notices</span></a>
+</div>
+
+<div class="grid2">
+  <section class="card">
+    <div class="card-h"><h2>My work</h2><a href="/work/new">+ Add work</a></div>
+    {{if .V.Mine}}
+    <ul class="items">
+      {{range .V.Mine}}
+      <li class="{{due .Due .Status}}"><a href="/work/{{.ID}}?back=/"><b>{{cname .ClientID}}</b><span>{{.Type}}{{if .Period}} · {{.Period}}{{end}}</span></a>
+        <span class="meta">{{if .Due}}<span class="duet">{{date .Due}}</span>{{end}}<span class="pill st-{{slug .Status}}">{{.Status}}</span></span></li>
+      {{end}}
+    </ul>
+    <p class="more"><a href="/work?who=me">All my work →</a></p>
+    {{else}}<p class="empty">Nothing pending. Well done.</p>{{end}}
+  </section>
+
+  <section class="card">
+    <div class="card-h"><h2>Coming due dates</h2><a href="/calendar">Calendar →</a></div>
+    {{if .V.Dues}}
+    <ul class="items compact">
+      {{range .V.Dues}}<li class="{{if eq .Date $.Today}}today{{end}}"><span class="dd">{{date .Date}}</span><span>{{.Title}} <small class="muted">{{.Law}}</small></span></li>{{end}}
+    </ul>
+    {{else}}<p class="empty">No statutory dates in the next two weeks.</p>{{end}}
+  </section>
+</div>
+
+{{if .V.Notices}}
+<section class="card">
+  <div class="card-h"><h2>Notices with me</h2><a href="/notices/new">+ Add notice</a></div>
+  <ul class="items">
+    {{range .V.Notices}}
+    <li class="{{due .ReplyDue .Status}}"><a href="/notices/{{.ID}}"><b>{{cname .ClientID}}</b><span>{{.Act}}{{if .Section}} · {{.Section}}{{end}}{{if .Period}} · {{.Period}}{{end}}</span></a>
+      <span class="meta">{{if .ReplyDue}}<span class="duet">Reply {{date .ReplyDue}}</span>{{end}}{{if .Hearing}}<span class="duet">Hearing {{date .Hearing}}</span>{{end}}<span class="pill">{{.Status}}</span></span></li>
+    {{end}}
+  </ul>
+</section>
+{{end}}
+
+{{if partner .Me}}
+<section class="card">
+  <div class="card-h"><h2>Team today</h2>{{if .V.Unassigned}}<a href="/work?who=none">{{.V.Unassigned}} work not assigned →</a>{{end}}</div>
+  <div class="tbl"><table>
+    <thead><tr><th>Staff</th><th>In</th><th>Out</th><th class="r">Open work</th><th class="r">Overdue</th><th class="r">Due today</th></tr></thead>
+    <tbody>
+    {{range .V.Team}}<tr>
+      <td><a href="/work?who={{.User.ID}}">{{.User.Name}}</a>{{if .OnLeave}} <span class="pill">On leave</span>{{end}}</td>
+      <td>{{or .In "–"}}</td><td>{{or .Out "–"}}</td>
+      <td class="r">{{.Open}}</td><td class="r {{if .Over}}bad{{end}}">{{.Over}}</td><td class="r">{{.Today}}</td></tr>{{end}}
+    </tbody></table></div>
+</section>
+{{if .V.PendingLeave}}
+<section class="card">
+  <div class="card-h"><h2>Leave waiting for approval</h2></div>
+  <ul class="items">
+  {{range .V.PendingLeave}}<li><span><b>{{uname .UserID}}</b> · {{.Kind}} · {{date .From}}{{if ne .From .To}} to {{date .To}}{{end}}<br><small class="muted">{{.Reason}}</small></span>
+    <form method="post" action="/leave/{{.ID}}/decide" class="inline"><input type="hidden" name="csrf" value="{{$.CSRF}}"><input type="hidden" name="back" value="/">
+    <button class="btn sm" name="status" value="Approved">Approve</button><button class="btn sm line" name="status" value="Rejected">Reject</button></form></li>{{end}}
+  </ul>
+</section>
+{{end}}
+{{end}}
+{{end}}
