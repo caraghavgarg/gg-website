@@ -1,0 +1,20 @@
+# GG Office
+Options -Indexes
+DirectoryIndex index.php
+
+<IfModule mod_rewrite.c>
+RewriteEngine On
+RewriteRule ^(data|lib|views)(/|$) - [F,L]
+RewriteRule ^config\.php$ - [F,L]
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteRule ^ index.php [L,QSA]
+</IfModule>
+
+<FilesMatch "\.(json|lock|tmp|zip|md)$">
+  <IfModule mod_authz_core.c>
+    Require all denied
+  </IfModule>
+  <IfModule !mod_authz_core.c>
+    Deny from all
+  </IfModule>
+</FilesMatch>

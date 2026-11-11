@@ -1,0 +1,3 @@
+<?php if (!defined('GGO')) { exit; } ?>
+<input type="search" class="pick-filter" data-for="client_id" placeholder="Type to find the client…"<?= $pick_id ? '' : ' autofocus' ?>>
+<select name="client_id" id="client_id" required><option value="">— choose —</option><?php foreach (sorted_clients() as $cl): if (!empty($cl['active']) || (int) $cl['id'] === (int) $pick_id): ?><option value="<?= $cl['id'] ?>"<?= sel($cl['id'], $pick_id) ?>><?= h($cl['name']) ?><?= $cl['pan'] !== '' ? ' · ' . h($cl['pan']) : '' ?><?= $cl['file_no'] !== '' ? ' · File ' . h($cl['file_no']) : '' ?></option><?php endif; endforeach; ?></select>
