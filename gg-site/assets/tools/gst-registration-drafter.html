@@ -119,6 +119,10 @@ input.mono{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.03
 
   <div class="grid">
     <form class="form" id="form" autocomplete="off">
+      <div class="banner" id="privacyBanner">
+        <span><b>Private:</b> nothing you type is stored. Refreshing or closing this page clears the form.</span>
+        <button type="button" class="small ghost" id="btnSample">See a filled example</button>
+      </div>
       <div class="banner" id="exampleBanner" hidden>
         <span><b>Example data loaded.</b> Names and PANs are samples to show how drafts fill in.</span>
         <button type="button" class="small" id="btnClearExample">Clear and start</button>
@@ -134,10 +138,10 @@ input.mono{font-family:var(--f-mono);text-transform:uppercase;letter-spacing:.03
       <details class="sec" open>
         <summary><span class="n">02</span>Business details</summary>
         <div class="body">
-          <label class="f">Legal name (exactly as per PAN)<input id="e_legal" data-k="entity.legal"></label>
+          <label class="f" id="legalLabel">Legal name (exactly as per PAN)<input id="e_legal" data-k="entity.legal"></label>
           <div class="row">
             <label class="f">Trade name<input id="e_trade" data-k="entity.trade"></label>
-            <label class="f">PAN of business<input id="e_pan" class="mono" data-k="entity.pan" maxlength="10"></label>
+            <label class="f" id="panLabel">PAN of business<input id="e_pan" class="mono" data-k="entity.pan" maxlength="10"></label>
           </div>
           <div class="row" id="regRow">
             <label class="f"><span id="regLabel">Registration no.</span><input id="e_reg" data-k="entity.reg"></label>
@@ -311,7 +315,7 @@ const LS="gst-reg-drafter-v1";
 let S;
 /* Public website: nothing is kept between visits. Remove anything stored by earlier versions. */
 try{ localStorage.removeItem(LS); }catch(e){}
-S = Object.assign(blankState(), exampleState());
+S = blankState();
 function persist(){}
 
 /* ---------------- helpers ---------------- */
@@ -329,9 +333,31 @@ const getP = id => S.persons.find(p=>p.id===id) || S.persons[0] || blankPerson()
 const promoters = () => S.persons.filter(p=>p.promoter);
 function who(p){ return (p.title||"Shri")+" "+V(p.name,"Name")+", "+(p.rel||"S/o")+" "+V(p.father,"Father's / spouse's name"); }
 function C(){ return CONS[S.cons]; }
+const solo = () => ["prop","huf"].includes(S.cons);
+const hufName = () => { const n=V(S.entity.legal,"HUF name"); return /\bHUF\b/i.test(n) ? n : n+" (HUF)"; };
+/* Proprietorship: one proprietor only, and the legal name and PAN are the proprietor's own.
+   HUF: the HUF has its own name and PAN and acts through one Karta. */
+function syncSolo(){
+  if(!solo()){ S.persons.forEach(p=>{ if(p.desig==="Proprietor"||p.desig==="Karta") p.desig=""; }); return; }
+  S.persons.forEach((p,i)=>{ p.promoter = i===0; });
+  const head=S.persons[0];
+  if(head){
+    if(!has(head.desig)) head.desig = S.cons==="prop" ? "Proprietor" : "Karta";
+    if(S.cons==="prop"){ S.entity.legal = head.name||""; S.entity.pan = (head.pan||"").toUpperCase(); }
+  }
+}
+function lockEntity(){
+  const prop=S.cons==="prop", huf=S.cons==="huf";
+  const L=$("#e_legal"), P=$("#e_pan");
+  L.readOnly=prop; P.readOnly=prop;
+  L.value=S.entity.legal||""; P.value=S.entity.pan||"";
+  $("#legalLabel").firstChild.textContent = prop ? "Legal name (same as the proprietor's name, filled from below)" : huf ? "Name of the HUF (exactly as per HUF PAN)" : "Legal name (exactly as per PAN)";
+  $("#panLabel").firstChild.textContent = prop ? "PAN (proprietor's own PAN)" : huf ? "PAN of the HUF" : "PAN of business";
+}
 function entName(){
   const n = V(S.entity.legal,"Legal name");
-  return (["prop","firm","huf"].includes(S.cons) ? "M/s " : "") + (S.cons==="prop" ? V(S.entity.trade||S.entity.legal,"Trade name") : n);
+  if(S.cons==="huf") return V(S.entity.legal,"HUF name");
+  return (["prop","firm"].includes(S.cons) ? "M/s " : "") + (S.cons==="prop" ? V(S.entity.trade||S.entity.legal,"Trade name") : n);
 }
 function upName(){ return has(S.entity.legal) ? S.entity.legal.toUpperCase() : M1+"Legal name"+M2; }
 const pan = () => V(S.entity.pan && S.entity.pan.toUpperCase(),"PAN");
@@ -384,7 +410,7 @@ function authDocs(){
 }
 function docA(){
   const c=C(), own=promoters()[0]||getP(S.sigId), sig=getP(S.sigId);
-  const capacity = S.cons==="huf" ? "Karta of "+V(S.entity.legal,"HUF name")+" (HUF), PAN "+pan() : "sole proprietor of "+entName()+" (PAN "+V(S.entity.pan,"PAN")+")";
+  const capacity = S.cons==="huf" ? "Karta of "+hufName()+", PAN "+pan() : "sole proprietor of "+entName()+" (PAN "+V(S.entity.pan,"PAN")+")";
   return [
     {k:"title",t:"AUTHORISATION LETTER"},
     {k:"right",t:"Date: "+dateD()},
@@ -456,7 +482,11 @@ function docD(){
     {k:"sig",align:"l",lines:["Place: "+placeD(),"Encl.: "+(S.cons==="govt"?"Appointment / authority order":"Certified copy of resolution")]}
   ];
 }
-function applicantLabel(){ return S.cons==="prop" ? V(promoters()[0]&&promoters()[0].name,"Proprietor")+", proprietor of "+entName() : entName(); }
+function applicantLabel(){
+  if(S.cons==="prop") return who(promoters()[0]||blankPerson())+", proprietor of "+entName();
+  if(S.cons==="huf") return hufName()+", through its Karta "+who(promoters()[0]||blankPerson());
+  return entName();
+}
 function docE(){
   const os=S.prem.owners, many=os.length>1, I=many?"We":"I", my=many?"our":"my", am=many?"are":"am";
   const ownerTxt = os.map(o=>(o.title||"Shri")+" "+V(o.name,"Owner name")+", "+(o.rel||"S/o")+" "+V(o.father,"Owner's father's name")+", residing at "+V(o.address,"Owner's address")).join("; and ");
@@ -529,7 +559,9 @@ function docG(){
 function docH(){
   const os=S.prem.owners, sig=getP(S.sigId), r=S.rent;
   const lessor = os.map(o=>(o.title||"Shri")+" "+V(o.name,"Landlord name")+", "+(o.rel||"S/o")+" "+V(o.father,"Father's name")+", R/o "+V(o.address,"Address")+", PAN "+V(o.pan&&o.pan.toUpperCase(),"PAN")).join("; and ");
-  const lessee = S.cons==="prop" ? who(promoters()[0]||sig)+", proprietor of "+entName()+", PAN "+pan() : entName()+", PAN "+pan()+", through its authorised signatory "+who(sig);
+  const lessee = S.cons==="prop" ? who(promoters()[0]||sig)+", proprietor of "+entName()+", PAN "+pan()
+    : S.cons==="huf" ? hufName()+", PAN "+pan()+", through its Karta "+who(promoters()[0]||sig)
+    : entName()+", PAN "+pan()+", through its authorised signatory "+who(sig);
   const end = addMonths(r.start, r.months);
   return [
     {k:"note",t:"[On non-judicial stamp paper of the value prescribed under the "+stateN()+" Stamp Act]"},
@@ -704,13 +736,13 @@ function personHTML(p,i){
   const sel=(k,opts)=>'<select id="p'+i+'_'+k+'" data-k="'+pre+k+'">'+opts.map(o=>'<option'+(p[k]===o?" selected":"")+'>'+o+'</option>').join("")+'</select>';
   const inp=(k,label,extra)=>'<label class="f">'+label+'<input id="p'+i+'_'+k+'" data-k="'+pre+k+'" value="'+esc(p[k]||"")+'"'+(extra||"")+'></label>';
   return '<div class="person" data-pid="'+p.id+'">'
-    +'<div class="ph"><span>'+(p.promoter?esc(c.role):"Signatory (not a promoter)")+' '+(i+1)+'</span>'
-    +(S.persons.length>1?'<button type="button" class="small ghost danger" data-del-person="'+i+'">Remove</button>':'')+'</div>'
+    +'<div class="ph"><span>'+(solo()?(i===0?esc(c.role)+(S.cons==="prop"?" (only one)":" of the HUF"):"Separate authorised signatory"):(p.promoter?esc(c.role):"Signatory (not a promoter)")+' '+(i+1))+'</span>'
+    +(S.persons.length>1&&!(solo()&&i===0)?'<button type="button" class="small ghost danger" data-del-person="'+i+'">Remove</button>':'')+'</div>'
     +'<div class="row three"><label class="f">Title'+sel("title",["Shri","Smt.","Ms.","Dr."])+'</label>'+inp("name","Full name")+inp("pan","PAN",' class="mono" maxlength="10"')+'</div>'
     +'<div class="row three"><label class="f">Relation'+sel("rel",["S/o","D/o","W/o"])+'</label>'+inp("father","Father's / spouse's name")+inp("desig","Designation")+'</div>'
     +'<div class="row">'+inp("age","Age",' inputmode="numeric"')+(c.din?inp("din","DIN",' class="mono"'):inp("mobile","Mobile"))+'</div>'
     +'<label class="f">Residential address<input id="p'+i+'_address" data-k="'+pre+'address" value="'+esc(p.address||"")+'"></label>'
-    +'<label class="chk"><input type="checkbox" id="p'+i+'_promoter" data-k="'+pre+'promoter"'+(p.promoter?" checked":"")+'>Promoter / '+esc(c.role.toLowerCase())+' (shown in partner / director lists)</label>'
+    +(solo()?'':'<label class="chk"><input type="checkbox" id="p'+i+'_promoter" data-k="'+pre+'promoter"'+(p.promoter?" checked":"")+'>Promoter / '+esc(c.role.toLowerCase())+' (shown in partner / director lists)</label>')
     +'</div>';
 }
 function renderPersons(){
@@ -765,7 +797,9 @@ function applyVisibility(){
   $("#deponentLabel").firstChild.textContent = t==="inherited"?"Deponent (legal heir)":"Person giving the undertaking";
   $("#rentSec").hidden = t!=="rent_unreg";
   $("#premNote").textContent = "Upload: "+pt.docs.join("; ")+".";
+  lockEntity();
   $("#exampleBanner").hidden = !S.example;
+  $("#privacyBanner").hidden = !!S.example;
 }
 
 /* ---------------- preview ---------------- */
@@ -794,6 +828,7 @@ form.addEventListener("input",e=>{
   if(el.classList.contains("mono")) v=v.toUpperCase();
   set(k,v);
   if(S.example){ S.example=false; }
+  if(solo()){ syncSolo(); if(/^persons\.0\.(name|pan)$/.test(k)) lockEntity(); }
   if(/^persons\.\d+\.(name|desig)$/.test(k)) renderPersonSelects();
   if(/^persons\.\d+\.promoter$/.test(k)) renderPersons();
   if(k==="prem.type"){ renderOwners(); }
@@ -801,13 +836,13 @@ form.addEventListener("input",e=>{
 });
 form.addEventListener("change",e=>{
   const el=e.target;
-  if(el.name==="cons"){ S.cons=el.value; S.example=false; renderPersons(); refresh(); }
+  if(el.name==="cons"){ if(S.cons==="prop" && el.value!=="prop"){ S.entity.legal=""; S.entity.pan=""; } S.cons=el.value; S.example=false; syncSolo(); renderPersons(); fillScalars(); refresh(); }
   if(el.dataset.person!==undefined){ set(el.dataset.k, el.value); refresh(); }
   if(el.id==="p_type"){ S.prem.type=el.value; renderOwners(); refresh(); }
 });
 form.addEventListener("click",e=>{
   const dp=e.target.closest("[data-del-person]"), dO=e.target.closest("[data-del-owner]");
-  if(dp){ S.persons.splice(+dp.dataset.delPerson,1); renderPersons(); refresh(); }
+  if(dp){ S.persons.splice(+dp.dataset.delPerson,1); syncSolo(); renderPersons(); refresh(); }
   if(dO){ S.prem.owners.splice(+dO.dataset.delOwner,1); renderOwners(); refresh(); }
 });
 $("#btnAddPerson").addEventListener("click",()=>{ const solo=["prop","huf"].includes(S.cons); S.persons.push(blankPerson(!solo)); renderPersons(); refresh(); });
@@ -846,11 +881,15 @@ $("#btnNew").addEventListener("click",()=>{
   newArmed=false; $("#btnNew").textContent="New client"; S=blankState(); renderAll(); status("Form cleared.","");
 });
 $("#btnClearExample").addEventListener("click",()=>{ S=blankState(); renderAll(); });
+$("#btnSample").addEventListener("click",()=>{ S=Object.assign(blankState(),exampleState()); renderAll(); });
 
-function renderAll(){ renderCons(); renderPremSelect(); renderPersons(); renderOwners(); fillScalars(); applyVisibility(); renderPreview(); persist(); }
+function noAuto(){ document.querySelectorAll("input,textarea,select").forEach(el=>el.setAttribute("autocomplete","off")); }
+function renderAll(){ syncSolo(); renderCons(); renderPremSelect(); renderPersons(); renderOwners(); fillScalars(); applyVisibility(); renderPreview(); persist(); noAuto(); }
 renderAll();
 /* Browsers can restore a page (and typed values) from their back/forward cache: always start again. */
-window.addEventListener("pageshow",function(e){ if(e.persisted){ S=Object.assign(blankState(),exampleState()); renderAll(); } });
+function wipe(){ S=blankState(); renderAll(); }
+window.addEventListener("pageshow",wipe);
+window.addEventListener("pagehide",function(){ document.querySelectorAll("input,textarea").forEach(el=>{ if(el.type==="checkbox"||el.type==="radio") el.checked=false; else if(el.type!=="file"&&el.type!=="button") el.value=""; }); });
 })();
 </script>
 
